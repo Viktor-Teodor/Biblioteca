@@ -56,7 +56,6 @@ $sql="CREATE TABLE editura(
 id INT(6),
   nume VARCHAR(20) NOT NULL,
   oras VARCHAR(15) NOT NULL,
-  nr_inv_cae INT(10) NOT NULL,
   AUTO_INCREMENT PRIMARY KEY(id)
 )";
 
@@ -104,7 +103,9 @@ $sql="CREATE TABLE imprumut(
   data_imprumut DATE() NOT NULL,
   data_restituire DATE(),
   nr_matricol_elv VARCHAR(7) NOT NULL,
-  nr_inv_cae INT(10) NOT NULL
+  nr_inv_cae INT(10) NOT NULL,
+  FOREIGN KEY (nr_matricol_elv) REFERENCES elev,
+  FOREIGN KEY (nr_inv_cae) REFERENCES carte
 )";
 
 
