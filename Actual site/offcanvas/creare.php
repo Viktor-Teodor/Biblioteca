@@ -31,11 +31,12 @@ echo "Connected successfully";
 
 
 $sql="CREATE TABLE elev(
- nr_matricol VARCHAR(7) NOT NULL PRIMARY KEY,
+ nr_matricol VARCHAR(7) NOT NULL AUTO_INCREMENT,
  nume VARCHAR(20) NOT NULL,
  prenume VARCHAR(30) NOT NULL,
  clasa VARCHAR(5) NOT NULL,
  telefon VARCHAR(15) NOT NULL UNIQUE,
+ PRIMARY KEY(nr_matricol),
  email VARCHAR(30) NOT NULL UNIQUE
 )";
 
