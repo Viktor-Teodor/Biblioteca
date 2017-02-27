@@ -40,7 +40,7 @@ $sql="CREATE TABLE elev(
 )";
 
 
-if(mysqli_query($conn,$sql))
+if($conn->query($sql))
   echo "TABLE elev CREATED";
 else
   echo "something went wrong";
@@ -60,7 +60,7 @@ id INT(6),
   AUTO_INCREMENT PRIMARY KEY(id)
 )";
 
-if(mysqli_query($conn,$sql))
+if($conn->query($sql))
   echo "TABLE editura created";
 else
   echo "something went wrong";
@@ -90,46 +90,47 @@ else
   echo "Error: ". $conn->connect_error;
 echo"<br>";
 
-
-
-
-
-
-
-// tabela imprumuturilor
-
-
-
-$sql="CREATE TABLE imprumut(
-  data_imprumut DATE() NOT NULL,
-  data_restituire DATE(),
-  nr_matricol_elv VARCHAR(7) NOT NULL,
-  nr_inv_cae INT(10) NOT NULL
-)";
-
-
-if(mysqli_query($conn,$sql))
-  echo "TABLE imprumut CREATED";
-else
-  echo "something went wrong";
-echo '<br>';
-
-
-// tabela imprumuturilor
-
+//tabela cu mentiuni
 
 
 $sql="CREATE TABLE mentiune(
   nr_inv_cae INT(10) NOT NULL,
   id INT (5) NOT NULL,
-  continut TINYTEXT
+  continut TINYTEXT,
+  FOREIGN KEY (nr_inv_cae) REFERENCES carte(id)
 )";
 
 
-if(mysqli_query($conn,$sql))
+if($conn->query($sql))
   echo "TABLE mentiune created";
 else
   echo "something went wrong";
 echo '<br>';
+
+// tabela imprumuturilor
+
+$sql="CREATE TABLE imprumut(
+  id INT(5) AUTOINCREMENT PRIMARY KEY,
+  data_imprumut DATE() NOT NULL,
+  data_restituire DATE(),
+  nr_matr VARCHAR(7) NOT NULL,
+  FOREIGN KEY (nr_matr) REFERENCES elev(nr_matricol) 
+)";
+
+
+if($conn->query($sql))
+  echo "TABLE imprumut CREATED";
+else
+  echo "something went wrong";
+echo '<br>';
+
+$sql="CREATE TABLE instanta(
+    id INT (5) AUTOINCREMENT PRIMARY KEY,
+    id_imp INT(5) NOT NULL,
+    id_inv_cae INT(5) NOT NULL,
+    FOREIGN KEY (id_imp) REFERENCES imprumut(id),
+    FOREIGN KEY (id_inv_car) REFERENCES carte(nr_inv)
+)";
+
 
 ?>
