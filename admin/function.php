@@ -76,14 +76,12 @@ function usercount(){
             echo "Failed to connect to MySQL: " . mysqli_connect_error();
           }
 
-        $sql="SELECT * FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14";
-
-        if ($result=mysqli_query($conn,$sql))
-          {
+        $sql="SELECT COUNT(id_elev) FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14 AND data_res IS NULL";
+        $result=mysqli_query($conn,$sql);
+        $user_res = mysqli_fetch_assoc($result);
           // Return the number of rows in result set
-          $nr=mysqli_num_rows($result);
+          $nr=$user_res['COUNT(id_elev)'];
           mysqli_free_result($result);
-          }
 
         mysqli_close($conn);
         return $nr;
@@ -134,7 +132,7 @@ function usercount(){
             return $nr;
             }
 
-// Adaugam un nu imprumut
+// Adaugam un nou imprumut
     $add_rec=0;
   if(isset($_POST['imprumut'])){
     if($_POST['nr_mat'] != "Numar matricol"){
