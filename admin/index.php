@@ -34,6 +34,102 @@ include_once 'function.php';
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <?php
+    $conn=new mysqli("localhost","root","","biblioteca");
+
+    global $add_rec, $res_rec;
+    $add_rec=$res_rec=0;
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // collect value of input field
+        $nume = htmlspecialchars($_REQUEST['nume']);
+        $prenume=htmlspecialchars($_REQUEST['prenume']);
+        $nr_matricol=htmlspecialchars($_REQUEST['nr_mat']);
+        $clasa=htmlspecialchars($_REQUEST['clasa']);
+        $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
+        $results=array();
+        $user_imp=array();
+        $restanta=array();
+
+    if(isset($_POST['imprumut'])){
+    if($nr_matricol){
+    $sql = "INSERT INTO imprumut (nr_matr, data_imprumut, id_carte)
+            VALUES ('$nr_matricol', CURDATE(),'$nr_inv')";
+
+      if ($conn->query($sql)){
+        $add_rec=1;
+      }
+    }
+
+    else {
+
+    $sql="SELECT * FROM imprumut WHERE nume==='$nume' AND prenume==='$prenume' AND clasa==='$clasa'";
+
+    $results =$conn->query($sql);
+    if($results){
+    $user_imp=$results->fetch_assoc();
+    $results->free();
+
+    $sql = "INSERT INTO imprumut (nr_matr, id_carte, data_imprumut)
+            VALUES ('$user_imp[nr_mat]', '$nr_inv', CURDATE())";
+
+      if ($conn->query($sql)) {
+        $add_rec=1;
+      }
+        $user_imp->free();
+      }
+    }
+    }
+    //restituire carte
+
+
+    if(isset($_POST['restituire'])){
+      if($nr_matricol){
+
+        $sql = "SELECT DATEDIFF (CURDATE(), data_imp) FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14 AND id_elev='$nr_matricol' AND id_carte='$nr_inv' AND data_res IS NULL";
+
+        $result = $conn->query($sql);
+        if($results){
+        $restanta = $result->fetch_assoc();
+
+        $sql = "UPDATE imprumut SET data_res=CURDATE()
+                WHERE id_elev='$nr_matricol' AND id_carte='$nr_inv' AND data_res IS NULL";
+
+      if ($conn->query($sql)) {
+        $res_rec=1;
+        }
+        $result->free();
+        $restanta->free();
+      }
+    }
+    else {
+
+    $sql = "SELECT nr_matricol FROM elev WHERE nume='$nume' AND prenume='$prenume' AND clasa='$clasa'";
+
+    $result =$conn->query($sql);
+    if($results){
+    $user_imp =$result->fetch_assoc();
+    $result->free();
+
+    $sql = "SELECT DATEDIFF (CURDATE(), data_imp) FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14 AND id_elev='$user_imp[nr_matr]' AND id_carte='$nr_inv' AND data_res IS NULL";
+
+    $result = $conn->query($sql);
+    $restanta = $result->fetch_assoc();
+
+    $sql = "UPDATE imprumut SET data_res=CURDATE()
+            WHERE id_elev='$user_imp[nr_matr]' AND id_carte='$nr_inv' AND data_res IS NULL";
+      if ($conn->query($sql)) {
+        $res_rec=1;
+    }
+    }
+    }
+    }
+    }
+
+
+    ?>
+
+
+
 </head>
 
 <body>
@@ -55,7 +151,7 @@ include_once 'function.php';
             <!-- Top Menu Items -->
             <?php include_once "menu_top.php" ?>
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-            <?php include_once 'menu.php'; ?>
+              <?php include_once 'menu.php'; ?>
             <!-- /.navbar-collapse -->
         </nav>
 
@@ -84,6 +180,7 @@ include_once 'function.php';
                 </div>
 
                 <?php } ?>
+
                 <?php if($res_rec==1){ ?>
                 <div class="row">
                     <div class="col-lg-12">
@@ -228,18 +325,19 @@ include_once 'function.php';
                 <!-- /.row -->
 
                 <div class="row">
+
                     <div class="col-lg-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title"><i class="fa fa-long-arrow-right fa-fw"></i> Imprumut</h3>
                             </div>
                             <div class="panel-body">
-                                <form method="post">
+                                <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
                                   <div class="form-group">
                                       <input name="nr_inv" class="form-control" placeholder="Numar inventar carte" required>
                                   </div>
                                   <div class="form-group">
-                                    <input name="nr_mat" value="Numar matricol" class="form-control" placeholder="Numar matricol elev">
+                                    <input name="nr_mat" class="form-control" placeholder="Numar matricol elev">
                                   </div>
                                   <div class="alert alert-info">
                                       <strong><u>Sau !</u></strong> Puteti completa campurile de mai jos lasand numarul matricol liber
@@ -261,18 +359,21 @@ include_once 'function.php';
                             </div>
                         </div>
                     </div>
+
+
+
                     <div class="col-lg-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title"><i class="fa fa-clock-o fa-fw"></i> Restituiri</h3>
                             </div>
                             <div class="panel-body">
-                                  <form method="post">
+                                  <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
                                     <div class="form-group">
                                         <input name="nr_inv" class="form-control" placeholder="Numar inventar carte" required>
                                     </div>
                                     <div class="form-group">
-                                      <input name="nr_mat" value="Numar matricol" class="form-control" placeholder="Numar matricol elev">
+                                      <input name="nr_mat" class="form-control" placeholder="Numar matricol elev">
                                     </div>
                                     <div class="alert alert-info">
                                         <strong><u>Sau !</u></strong> Puteti completa campurile de mai jos lasand numarul matricol liber

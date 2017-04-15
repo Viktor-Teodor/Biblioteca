@@ -13,7 +13,7 @@ include_once 'function.php';
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin - Bootstrap Admin Template</title>
+    <title>Cititori</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -72,7 +72,10 @@ include_once 'function.php';
                     </div>
                 </div>
                 <!-- /.row -->
+
                 <div class="row">
+
+                  <!--readers' panel -->
                     <div class="col-lg-3 col-md-6">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
@@ -99,6 +102,9 @@ include_once 'function.php';
                             </a>
                         </div>
                     </div>
+
+
+                    <!-- pupils' panel -->
                     <div class="col-lg-3 col-md-6">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
@@ -121,6 +127,9 @@ include_once 'function.php';
                             </a>
                         </div>
                     </div>
+
+
+                    <!-- teachers' panel -->
                     <div class="col-lg-3 col-md-6">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
@@ -143,6 +152,8 @@ include_once 'function.php';
                             </a>
                         </div>
                     </div>
+
+                    <!-- debtors' panel -->
                     <div class="col-lg-3 col-md-6">
                         <div class="panel panel-red">
                             <div class="panel-heading">
@@ -165,11 +176,14 @@ include_once 'function.php';
                             </a>
                         </div>
                     </div>
+
+
                 </div>
 
                   <?php include_once 'modal.php'; ?>
                 <!-- /.control for add and delete -->
                   <div class="row">
+
                       <div class="col-lg-3 col-md-6">
                           <div class="panel panel-primary">
                               <div class="panel-heading">
@@ -192,6 +206,8 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
                       <div class="col-lg-3 col-md-6">
                           <div class="panel panel-primary">
                               <div class="panel-heading">
@@ -214,6 +230,9 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
+
                       <div class="col-lg-3 col-md-6">
                           <div class="panel panel-primary">
                               <div class="panel-heading">
@@ -236,6 +255,9 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
+
                       <div class="col-lg-3 col-md-6">
                           <div class="panel panel-red">
                               <div class="panel-heading">
@@ -258,15 +280,19 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
                   </div>
                 <!-- /.row -->
 
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="panel panel-default">
+
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Area Chart</h3>
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Resultate</h3>
                             </div>
+
                             <div class="panel-body">
                                   <div class="table-responsive">
                                       <table class="table table-bordered table-hover table-striped">
@@ -282,6 +308,10 @@ include_once 'function.php';
                                           </thead>
                                           <tbody>
                                                   <?php
+                                                  $conn=new mysqli("localhost","root","","biblioteca");
+                                                  $result=array();
+                                                  $row=array();
+
                                                   $sort=$_GET['sort'];
                                                   switch ($sort) {
                                                       case 0:
@@ -315,6 +345,7 @@ include_once 'function.php';
                                                     } else {
                                                         echo "0 results";
                                                     }
+                                                    $result->free();
                                                     $conn->close();
                                                   ?>
                                               </tr>

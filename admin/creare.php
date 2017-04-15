@@ -40,22 +40,9 @@ $sql="CREATE TABLE elev(
  email VARCHAR(30) NOT NULL UNIQUE
 )";
 
+
 if($conn->query($sql))
   echo "TABLE elev CREATED";
-else
-  echo "something went wrong: ".$conn->error;
-echo '<br>';
-
-// tabela cu editurile
-$sql="CREATE TABLE editura(
-  id INT(6) NOT NULL   AUTO_INCREMENT,
-  nume VARCHAR(20) NOT NULL,
-  oras VARCHAR(15) NOT NULL,
-  nr_inv_cae INT(10) NOT NULL,
- PRIMARY KEY(id)
-)";
-if($conn->query($sql))
-  echo "TABLE editura created";
 else
   echo "something went wrong: ".$conn->error;
 echo '<br>';
@@ -68,10 +55,9 @@ $sql="CREATE TABLE carte(
   pret INT(4) NOT NULL,
   volum int(3),
   disponibilitate int(1),
-  id_eda INT(6),
+  editura VARCHAR(30),
   categorie VARCHAR(10),
-  PRIMARY KEY (nr_inv),
-  FOREIGN KEY (id_eda) REFERENCES editura(id)
+  PRIMARY KEY (nr_inv)
 )";
 
 if($conn->query($sql))
@@ -102,8 +88,10 @@ $sql="CREATE TABLE imprumut(
   intarziat INT(2),
   suma_restanta INT (5),
   nr_matr VARCHAR(7) NOT NULL,
+  id_carte INT (10) NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY (nr_matr) REFERENCES elev(nr_matricol)
+  FOREIGN KEY (nr_matr) REFERENCES elev(nr_matricol),
+  FOREIGN KEY (id_carte) REFERENCES carte(nr_inv)
 )";
 
 if($conn->query($sql))
@@ -112,17 +100,5 @@ else
   echo "something went wrong: ".$conn->error;
 echo '<br>';
 
-$sql="CREATE TABLE instanta(
-    id INT (5) NOT NULL AUTO_INCREMENT,
-    id_imp INT(5) NOT NULL,
-    id_inv_cae INT(5) NOT NULL,
-    PRIMARY KEY(id),
-    FOREIGN KEY (id_imp) REFERENCES imprumut(id),
-    FOREIGN KEY (id_inv_cae) REFERENCES carte(nr_inv)
-)";
-if($conn->query($sql))
-  echo "TABLE imprumut instanta";
-else
-  echo "something went wrong: ".$conn->error;
-echo '<br>';
+
 ?>

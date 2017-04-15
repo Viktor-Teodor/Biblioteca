@@ -71,9 +71,11 @@ include_once 'function.php';
                         </h2>
                     </div>
                 </div>
+
                 <!-- /.row -->
                   <?php //include_once "mini_stats.php"; ?>
                   <?php //include_once 'modal.php'; ?>
+
                 <!-- /.control for add and delete -->
                   <div class="row">
                       <div class="col-lg-3 col-md-6">
@@ -98,6 +100,9 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
+
                       <div class="col-lg-3 col-md-6">
                           <div class="panel panel-primary">
                               <div class="panel-heading">
@@ -120,6 +125,9 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
+
                       <div class="col-lg-3 col-md-6">
                           <div class="panel panel-primary">
                               <div class="panel-heading">
@@ -142,6 +150,9 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
+
                       <div class="col-lg-3 col-md-6">
                           <div class="panel panel-red">
                               <div class="panel-heading">
@@ -164,6 +175,8 @@ include_once 'function.php';
                               </a>
                           </div>
                       </div>
+
+
                   </div>
                 <!-- /.row -->
 
@@ -201,7 +214,7 @@ include_once 'function.php';
                                                             <td>'.$row["autor"].'</td>
                                                             <td>'.$row["pret"].'</td>
                                                             <td>'.$row["editura"].'</td>
-                                                            <td>'.$row["categoria"].'</td>
+                                                            <td>'.$row["categorie"].'</td>
                                                             </tr>';
                                                         }
                                                     } else {
