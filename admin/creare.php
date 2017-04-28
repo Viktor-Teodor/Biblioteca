@@ -56,7 +56,7 @@ $sql="CREATE TABLE carte(
   volum int(3),
   disponibilitate int(1),
   editura VARCHAR(30),
-  categorie VARCHAR(10),
+  categorie VARCHAR(30),
   PRIMARY KEY (nr_inv)
 )";
 

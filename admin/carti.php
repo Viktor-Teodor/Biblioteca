@@ -75,7 +75,8 @@ include_once 'function.php';
                 <!-- /.row -->
                   <?php //include_once "mini_stats.php"; ?>
                   <?php //include_once 'modal.php'; ?>
-
+                  <?php include_once 'modal_addbooks.php'; ?>
+                  <?php include_once 'modal_modbooks.php'; ?>
                 <!-- /.control for add and delete -->
                   <div class="row">
                       <div class="col-lg-3 col-md-6">
@@ -91,7 +92,7 @@ include_once 'function.php';
                                       </div>
                                   </div>
                               </div>
-                              <a href="#" data-toggle="modal" data-target="#add_elev">
+                              <a href="#" data-toggle="modal" data-target="#add_books">
                                   <div class="panel-footer">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -116,7 +117,7 @@ include_once 'function.php';
                                       </div>
                                   </div>
                               </div>
-                              <a href="#">
+                                <a href="#" data-toggle="modal" data-target="#mod_books">
                                   <div class="panel-footer">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -197,10 +198,13 @@ include_once 'function.php';
                                                   <th>Pret</th>
                                                   <th>Editura</th>
                                                   <th>Categoria</th>
+                                                  <th>Volum</th>
+                                                  <th>Disponibilitate</th>
                                               </tr>
                                           </thead>
                                           <tbody>
                                                   <?php
+                                                  $conn=new mysqli("localhost","root","","biblioteca");
                                                   $sql = "SELECT * FROM carte ORDER BY titlu ASC";
                                                     $result = $conn->query($sql);
 
@@ -215,11 +219,23 @@ include_once 'function.php';
                                                             <td>'.$row["pret"].'</td>
                                                             <td>'.$row["editura"].'</td>
                                                             <td>'.$row["categorie"].'</td>
-                                                            </tr>';
+                                                            <td>'.$row['volum'].'</td>'
+                                                            ;
+                                                            switch ($row['disponibilitate']) {
+                                                              case 1:
+                                                                echo '<td>Inisponibila</td>';
+                                                                break;
+                                                              case -1:
+                                                                echo '<td>Rezervata</td>';
+                                                                break;
+                                                              default:
+                                                                echo '<td>Disponibila</td';
+                                                                break;
+                                                            }
+                                                            echo '</tr>';
                                                         }
-                                                    } else {
-                                                        echo "0 results";
                                                     }
+
                                                     $conn->close();
                                                   ?>
                                               </tr>
