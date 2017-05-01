@@ -13,12 +13,12 @@
                         <br>
                         <br>
                         <p> Sau cautati carti dupa alte caracteristici</p>
-                        <input class="form-control" type="text" name="prenume" placeholder="Prenume" required>
+                        <input class="form-control" type="text" name="titlu" placeholder="Titlu" required>
                         <br>
-                        <input class="form-control" type="text" name="nr_matricol" placeholder="Numar matricol" required>
-                        <input class="form-control" type="text" name="clasa" placeholder="Clasa" required>
+                        <input class="form-control" type="text" name="nr_inv" placeholder="Numar inventar" required>
+                        <input class="form-control" type="text" name="autor" placeholder="Autor" required>
                         <br>
-                        <input class="form-control" type="text" name="telefon" placeholder="Telefon" required>
+                        <input class="form-control" type="text" name="pret" placeholder="Pret" required>
                         <input class="form-control" type="text" name="email" placeholder="Email" required>
                         <br>
 
