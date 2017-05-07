@@ -1,22 +1,13 @@
 <?php
+	session_start();
+	require_once 'classUser.php';
+	$session = new USER();
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "biblioteca";
+	// if user session is not active(not loggedin) this page will help 'home.php and profile.php' to redirect to login page
+	// put this file within secured pages that users (users can't access without login)
 
-// Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-$sql = "SELECT * FROM elev where nr_matricol = '2002'";
-$result = mysqli_query($conn, $sql);
-  if (mysqli_num_rows($result) > 0) {
-    $row = mysqli_fetch_assoc($result);
-        if($row['nr_matricol']!=2002)
-          header("location: ../");
-}
-?>
+	if(!$session->is_loggedin())
+	{
+		// session no set redirects to login page
+		// session_destroy();
+	}?>

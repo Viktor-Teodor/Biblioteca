@@ -1,5 +1,6 @@
 <?php
 include_once 'session.php';
+include_once 'classUser.php';
 include_once 'function.php';
 ?>
 <!DOCTYPE html>
@@ -75,7 +76,8 @@ include_once 'function.php';
                 <!-- /.row -->
                   <?php //include_once "mini_stats.php"; ?>
                   <?php //include_once 'modal.php'; ?>
-
+                  <?php include_once 'modal_addbooks.php'; ?>
+                  <?php include_once 'modal_modbooks.php'; ?>
                 <!-- /.control for add and delete -->
                   <div class="row">
                       <div class="col-lg-3 col-md-6">
@@ -91,7 +93,7 @@ include_once 'function.php';
                                       </div>
                                   </div>
                               </div>
-                              <a href="#" data-toggle="modal" data-target="#add_elev">
+                              <a href="#" data-toggle="modal" data-target="#add_books">
                                   <div class="panel-footer">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -116,7 +118,7 @@ include_once 'function.php';
                                       </div>
                                   </div>
                               </div>
-                              <a href="#">
+                                <a href="#" data-toggle="modal" data-target="#mod_books">
                                   <div class="panel-footer">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -184,7 +186,7 @@ include_once 'function.php';
                     <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Area Chart</h3>
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Rezultate</h3>
                             </div>
                             <div class="panel-body">
                                   <div class="table-responsive">
@@ -197,35 +199,45 @@ include_once 'function.php';
                                                   <th>Pret</th>
                                                   <th>Editura</th>
                                                   <th>Categoria</th>
+                                                  <th>Volum</th>
+                                                  <th>Disponibilitate</th>
                                               </tr>
                                           </thead>
                                           <tbody>
                                                   <?php
-                                                  $sql = "SELECT * FROM carte ORDER BY titlu ASC";
-                                                    $result = $conn->query($sql);
+                                                   require_once 'paginator.php';
 
-                                                    if ($result->num_rows > 0) {
-                                                        // output data of each row
-                                                        while($row = $result->fetch_assoc()) {
-                                                            echo '
-                                                            <tr>
-                                                            <td>'.$row["nr_inv"].'</td>
-                                                            <td>'.$row["titlu"].'</td>
-                                                            <td>'.$row["autor"].'</td>
-                                                            <td>'.$row["pret"].'</td>
-                                                            <td>'.$row["editura"].'</td>
-                                                            <td>'.$row["categorie"].'</td>
-                                                            </tr>';
-                                                        }
-                                                    } else {
-                                                        echo "0 results";
-                                                    }
-                                                    $conn->close();
-                                                  ?>
-                                              </tr>
+                                                  $conn=new mysqli("localhost","root","","biblioteca");
+
+                                                  $limit=10;
+                                                  $links=3;
+                                                  $query = "SELECT * FROM carte ORDER BY nr_inv ASC";
+                                                  $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
+
+                                                  $Paginator  = new Paginator( $conn, $query );
+
+                                                  $results    = $Paginator->getData( $limit, $page );
+
+
+                                                 for( $i = 0; $i < count( $results->data ); $i++ ){  ?>
+                                                    <tr>
+                                                      <td><?php echo $results->data[$i]['nr_inv']; ?></td>
+                                                      <td><?php echo $results->data[$i]['titlu']; ?></td>
+                                                      <td><?php echo $results->data[$i]['autor']; ?></td>
+                                                      <td><?php echo $results->data[$i]['pret']; ?></td>
+                                                      <td><?php echo $results->data[$i]['editura']; ?></td>
+                                                      <td><?php echo $results->data[$i]['categorie']; ?></td>
+                                                      <td><?php echo $results->data[$i]['volum']; ?></td>
+                                                      <td><?php echo $results->data[$i]['disponibilitate']; ?></td>
+                                                    </tr>
+                                                  <?php } ?>
+
                                           </tbody>
                                       </table>
                                   </div>
+                                  <?php
+                                 echo $Paginator->createLinks( $links, 'pagination pagination-sm' );
+                                  ?>
                             </div>
                         </div>
                     </div>

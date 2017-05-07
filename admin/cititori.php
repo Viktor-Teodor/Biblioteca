@@ -1,5 +1,6 @@
 <?php
 include_once 'session.php';
+include_once 'classUser.php';
 include_once 'function.php';
 ?>
 <!DOCTYPE html>

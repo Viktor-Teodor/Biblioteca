@@ -7,7 +7,7 @@
         <h4 class="modal-title" id="add_elevLabel">Adauga un elev</h4>
       </div>
       <div class="modal-body">
-                    <form method="post">
+                    <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
                       <input type="hidden" name="type" value="adduser" id="adduser">
                         <input class="form-control" type="text" name="nume" placeholder="Nume" required>
                         <input class="form-control" type="text" name="prenume" placeholder="Prenume" required>

@@ -76,7 +76,7 @@ function usercount(){
             echo "Failed to connect to MySQL: " . mysqli_connect_error();
           }
 
-        $sql="SELECT * FROM imprumut WHERE (DATEDIFF (CURDATE(), data_imprumut) > 14 AND !data_restituire) OR DATEDIFF(data_restituire, data_imprumut)>14";
+        $sql="SELECT * FROM imprumut WHERE (DATEDIFF (CURDATE(), data_imprumut) > 14 AND data_restituire IS NULL) OR DATEDIFF(data_restituire, data_imprumut)>14";
 
         if ($result=mysqli_query($conn,$sql))
           {
@@ -124,11 +124,11 @@ function usercount(){
 
             $sql="SELECT * FROM elev where clasa = 'prof'";
 
-            if ($result=mysqli_query($conn,$sql))
+            if ($result=$conn->query($sql))
               {
               // Return the number of rows in result set
               $nr=mysqli_num_rows($result);
-              mysqli_free_result($result);
+              $result->free();
               }
 
             mysqli_close($conn);

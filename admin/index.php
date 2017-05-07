@@ -1,5 +1,6 @@
 <?php
 include_once 'session.php';
+include_once 'classUser.php';
 include_once 'function.php';
 ?>
 <!DOCTYPE html>
@@ -39,86 +40,177 @@ include_once 'function.php';
 
     global $add_rec, $res_rec;
     $add_rec=$res_rec=0;
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // collect value of input field
         $nume = htmlspecialchars($_REQUEST['nume']);
         $prenume=htmlspecialchars($_REQUEST['prenume']);
         $nr_matricol=htmlspecialchars($_REQUEST['nr_mat']);
         $clasa=htmlspecialchars($_REQUEST['clasa']);
-        $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
+
+        $limita_carti=3;
+        $nr;
         $results=array();
         $user_imp=array();
         $restanta=array();
+        $rez=array();
+
+
 
     if(isset($_POST['imprumut'])){
-    if($nr_matricol){
-    $sql = "INSERT INTO imprumut (nr_matr, data_imprumut, id_carte)
-            VALUES ('$nr_matricol', CURDATE(),'$nr_inv')";
+      $rezervat=0;
+      $titlu=htmlspecialchars($_REQUEST['titlu']);
+      $volum=htmlspecialchars($_REQUEST['volum']);
 
-      if ($conn->query($sql)){
-        $add_rec=1;
+      $sql="SELECT * FROM carte WHERE titlu='$titlu'AND volum='$volum' AND disponibilitate='0'";
+
+      $results=$conn->query($sql);
+      $aux=$results->fetch_assoc();
+      $nr_inv=$aux['nr_inv'];
+
+      if($results->num_rows==0)
+        echo "Nu mai exista carti disponibile";
+
+      else{
+
+    if($nr_matricol){
+
+      $sql="SELECT * FROM imprumut WHERE nr_matr='$nr_matricol' AND data_restituire IS NULL";
+
+      $nr=$conn->query($sql);
+
+      $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1";
+        $rez=$conn->query($sql);
+
+        if($rez->num_rows==1)
+          $rezervat=1;
+
+      if($nr->num_rows<$limita_carti){
+        if($rezervat==1){
+
+                $rez=$rez->fetch_assoc();
+
+          $sql="INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',GETDATE,'$rez[nr_inv]')";
+          $conn->query("DELETE FROM rezervari WHERE id='$rez[id]'");
+          $conn->query("UPDATE carte SET disponibilitate=-1 WHERE nr_inv='$nr_inv'");
+        }
+        else
+        $sql = "INSERT INTO imprumut (nr_matr, data_imprumut, id_carte)
+              VALUES ('$nr_matricol', CURDATE(),'$nr_inv')";
+
+              if ($conn->query($sql)){
+                $add_rec=1;
       }
+      $sql="UPDATE carte SET disponibilitate='1' WHERE nr_inv='$nr_inv'";
+      $conn->query($sql);
+    }
+    else {
+      echo "Acest elev are deja 3 carti imprumutate";
     }
 
+}
     else {
 
-    $sql="SELECT * FROM imprumut WHERE nume==='$nume' AND prenume==='$prenume' AND clasa==='$clasa'";
+    $sql="SELECT * FROM elev WHERE nume='$nume' AND prenume='$prenume' AND clasa='$clasa'";
 
     $results =$conn->query($sql);
-    if($results){
+
+    if($results->num_rows>0){
+
     $user_imp=$results->fetch_assoc();
+
     $results->free();
 
-    $sql = "INSERT INTO imprumut (nr_matr, id_carte, data_imprumut)
-            VALUES ('$user_imp[nr_mat]', '$nr_inv', CURDATE())";
+    $nr_matricol=$user_imp['nr_matricol'];
 
-      if ($conn->query($sql)) {
-        $add_rec=1;
-      }
-        $user_imp->free();
-      }
+    $sql="SELECT * FROM imprumut WHERE nr_matr='$nr_matricol' AND data_restituire IS NULL";
+
+    $nr=$conn->query($sql);
+
+          if($nr->num_rows<$limita_carti){
+
+            $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1";
+
+              $rez=$conn->query($sql);
+
+              if($rez->num_rows==1){
+
+                $rez=$rez->fetch_assoc();
+                $sql="INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',CURDATE(),'$rez[nr_inv]')";
+
+                $conn->query("DELETE FROM rezervari WHERE id='$rez[id]'");
+                $conn->query("UPDATE carte SET disponibilitate=-1 WHERE nr_inv='$nr_inv'");
+              }
+              else
+                $sql = "INSERT INTO imprumut (nr_matr, id_carte, data_imprumut)
+                  VALUES ('$user_imp[nr_matricol]', '$nr_inv', CURDATE())";
+
+              if ($conn->query($sql)) {
+                        $add_rec=1;
+                      }
+                      //  $user_imp->free();
+                        $sql="UPDATE carte SET disponibilitate='1' WHERE nr_inv='$nr_inv'";
+                        $conn->query($sql);
+          }
+          else
+            echo "Acest elev are deja 3 carti imprumutate";
+    }
+    else {
+      echo "Acest elev nu exista";
     }
     }
+    }
+  }
+
+
+
     //restituire carte
-
-
     if(isset($_POST['restituire'])){
+      $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
+
       if($nr_matricol){
 
-        $sql = "SELECT DATEDIFF (CURDATE(), data_imp) FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14 AND id_elev='$nr_matricol' AND id_carte='$nr_inv' AND data_res IS NULL";
+        $sql = "SELECT DATEDIFF (CURDATE(), data_imprumut) AS diferenta, id FROM imprumut WHERE nr_matr='$nr_matricol' AND id_carte='$nr_inv' AND data_restituire IS NULL";
 
-        $result = $conn->query($sql);
-        if($results){
-        $restanta = $result->fetch_assoc();
+        $results = $conn->query($sql);
+        if($results->num_rows==1){
 
-        $sql = "UPDATE imprumut SET data_res=CURDATE()
-                WHERE id_elev='$nr_matricol' AND id_carte='$nr_inv' AND data_res IS NULL";
 
-      if ($conn->query($sql)) {
-        $res_rec=1;
+        $restanta = $results->fetch_assoc();
+
+        $sql = "UPDATE imprumut SET data_restituire=CURDATE()
+                WHERE nr_matr='$nr_matricol' AND id_carte='$nr_inv' AND data_restituire IS NULL";
+                if ($conn->query($sql)) {
+                  $res_rec=1;
         }
-        $result->free();
-        $restanta->free();
+        $sql="UPDATE carte SET disponibilitate='0' WHERE nr_inv='$nr_inv'";
+        $conn->query($sql);
+        $results->free();
       }
     }
     else {
 
     $sql = "SELECT nr_matricol FROM elev WHERE nume='$nume' AND prenume='$prenume' AND clasa='$clasa'";
 
-    $result =$conn->query($sql);
-    if($results){
-    $user_imp =$result->fetch_assoc();
-    $result->free();
+    $results =$conn->query($sql);
 
-    $sql = "SELECT DATEDIFF (CURDATE(), data_imp) FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14 AND id_elev='$user_imp[nr_matr]' AND id_carte='$nr_inv' AND data_res IS NULL";
+    if($results->num_rows>0){
 
-    $result = $conn->query($sql);
-    $restanta = $result->fetch_assoc();
+    $user_imp =$results->fetch_assoc();
+    $results->free();
 
-    $sql = "UPDATE imprumut SET data_res=CURDATE()
-            WHERE id_elev='$user_imp[nr_matr]' AND id_carte='$nr_inv' AND data_res IS NULL";
+      $sql = "SELECT DATEDIFF (CURDATE(), data_imprumut) AS diferenta, id FROM imprumut WHERE nr_matr='$user_imp[nr_matricol]' AND id_carte='$nr_inv' AND data_restituire IS NULL";
+
+    $results = $conn->query($sql);
+
+    $restanta = $results->fetch_assoc();
+
+    $sql = "UPDATE imprumut SET data_restituire=CURDATE()
+            WHERE nr_matr='$user_imp[nr_matricol]' AND id_carte='$nr_inv' AND data_restituire IS NULL";
       if ($conn->query($sql)) {
         $res_rec=1;
+        $sql="UPDATE carte SET disponibilitate='0' WHERE nr_inv='$nr_inv'";
+        $conn->query($sql);
     }
     }
     }
@@ -149,9 +241,9 @@ include_once 'function.php';
                 <a class="navbar-brand" href="index.html">Administrare biblioteca</a>
             </div>
             <!-- Top Menu Items -->
-            <?php include_once "menu_top.php" ?>
+            <?php// include_once "menu_top.php" ?>
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-              <?php include_once 'menu.php'; ?>
+              <?php //include_once 'menu.php'; ?>
             <!-- /.navbar-collapse -->
         </nav>
 
@@ -192,17 +284,17 @@ include_once 'function.php';
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                      <?php if($restanta['DATEDIFF (CURDATE(), data_imp)'] > 0){ ?>
+                      <?php if($restanta['diferenta'] > 0){ ?>
                         <div class="alert alert-danger alert-dismissable">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                             <i class="fa fa-info-circle"></i>
                             <strong>
                               <?php
-                                if($restanta['DATEDIFF (CURDATE(), data_imp)'] > 0)
-                                  if($restanta['DATEDIFF (CURDATE(), data_imp)'] == 1)
-                                    echo $restanta['DATEDIFF (CURDATE(), data_imp)'] . " zi intarziere";
+                                if($restanta['diferenta'] > 0)
+                                  if($restanta['diferenta'] == 1)
+                                    echo $restanta['diferenta'] . " zi intarziere";
                                   else
-                                    echo $restanta['DATEDIFF (CURDATE(), data_imp)'] . " zile intarziere";
+                                    echo $restanta['diferenta'] . " zile intarziere";
                                   ?>
                             </strong>
                         </div>
@@ -334,7 +426,10 @@ include_once 'function.php';
                             <div class="panel-body">
                                 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
                                   <div class="form-group">
-                                      <input name="nr_inv" class="form-control" placeholder="Numar inventar carte" required>
+                                      <input name="titlu" class="form-control" placeholder="Titlul cartii" required>
+                                  </div>
+                                  <div class="form-group">
+                                      <input name="volum" class="form-control" placeholder="Volumul cartii" required>
                                   </div>
                                   <div class="form-group">
                                     <input name="nr_mat" class="form-control" placeholder="Numar matricol elev">
@@ -394,80 +489,7 @@ include_once 'function.php';
                                 </div>
                             </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Transactions Panel</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Order #</th>
-                                                <th>Order Date</th>
-                                                <th>Order Time</th>
-                                                <th>Amount (USD)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>3326</td>
-                                                <td>10/21/2013</td>
-                                                <td>3:29 PM</td>
-                                                <td>$321.33</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3325</td>
-                                                <td>10/21/2013</td>
-                                                <td>3:20 PM</td>
-                                                <td>$234.34</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3324</td>
-                                                <td>10/21/2013</td>
-                                                <td>3:03 PM</td>
-                                                <td>$724.17</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3323</td>
-                                                <td>10/21/2013</td>
-                                                <td>3:00 PM</td>
-                                                <td>$23.71</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3322</td>
-                                                <td>10/21/2013</td>
-                                                <td>2:49 PM</td>
-                                                <td>$8345.23</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3321</td>
-                                                <td>10/21/2013</td>
-                                                <td>2:23 PM</td>
-                                                <td>$245.12</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3320</td>
-                                                <td>10/21/2013</td>
-                                                <td>2:15 PM</td>
-                                                <td>$5663.54</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3319</td>
-                                                <td>10/21/2013</td>
-                                                <td>2:13 PM</td>
-                                                <td>$943.45</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="text-right">
-                                    <a href="#">View All Transactions <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
                 <!-- /.row -->
 
