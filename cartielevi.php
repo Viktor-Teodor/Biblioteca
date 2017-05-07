@@ -107,55 +107,103 @@
 
  <div class="container" style="padding-bottom:300px">
   <div class="row">
-    <div class="col-md-12">
-            <div class="input-group" id="adv-search">
-                <input name="titlu" type="text" class="form-control" placeholder="Titlul cartii" />
-                <div class="input-group-btn">
-                    <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span></span>Cautare avansata</button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                <form class="form-horizontal" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>" role="form">
-                                  <div class="form-group">
-                                    <label for="filter">Filtreaza dupa</label>
-                                    <select class="form-control">
-                                        <option value="0" selected>Toate cartile</option>
-                                        <option value="1">Featured</option>
-                                        <option value="2">Most popular</option>
-                                        <option value="3">Top rated</option>
-                                        <option value="4">Most commented</option>
-                                    </select>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="contain">Autor</label>
-                                    <input name="autor" class="form-control" type="text" />
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="contain">Editura</label>
-                                    <input name="editura" class="form-control" type="text" />
-                                  </div>
-
-                                  <button type="submit" name="cauta" class="btn btn-primary" style="background-color:#000000"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                                </form>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary" style="background-color:#000000"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                    </div>
-                </div>
+    <div class="col-lg-6 col-md-offset-3">
+            <div class="panel-body">
+                <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+                  <div class="form-group">
+                      <input name="titlu" class="form-control" placeholder="Titlul cartii">
+                  </div>
+                  <div class="form-group">
+                      <input name="volum" class="form-control" placeholder="Volumul cartii">
+                  </div>
+                  <div class="form-group">
+                      <input name="autor" class="form-control" placeholder="Autorul cartii">
+                  </div>
+                  <div class="form-group">
+                    <input name="editura" class="form-control" placeholder="Editura">
+                  </div>
+                  <div class="form-group">
+                    <input type="submit" align="right" class="btn btn-default" name="cauta" value="Cauta">
+                  </div>
+                </form>
             </div>
-          </div>
         </div>
+    </div>
+
+  <div class="row">
+      <div class="col-lg-12">
+          <div class="panel panel-default">
+              <div class="panel-heading">
+                  <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Rezultate</h3>
+              </div>
+              <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Titlu</th>
+                                    <th>Autor</th>
+                                    <th>Pret</th>
+                                    <th>Editura</th>
+                                    <th>Categoria</th>
+                                    <th>Volum</th>
+                                    <th>Disponibilitate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <?php
+                                     require_once 'paginator.php';
+
+                                    $conn=new mysqli("localhost","root","","biblioteca");
+
+                                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+                                    $titlu=htmlspecialchars($_REQUEST['titlu']); if($titlu==NULL) $titlu='%';
+                                    $autor=htmlspecialchars($_REQUEST['autor']); if($autor==NULL) $autor='%';
+                                    $editura=htmlspecialchars($_REQUEST['editura']); if($editura==NULL) $editura='%';
+                                    $volum=htmlspecialchars($_REQUEST['volum']); if($volum==NULL) $volum='%';
+                                  //  $categorie=htmlspecialchars($_REQUEST['categorie']); if($categorie=="Toate cartile") $categorie="%";
+                                  $categorie='%';
+                                      if(isset($_POST['cauta'])){
+                                        $query="SELECT * FROM carte WHERE titlu LIKE '$titlu' AND autor LIKE '$autor' AND volum LIKE '$volum' AND editura LIKE '$editura' AND categorie LIKE '$categorie'";
+
+                                    $limit=10;
+                                    $links=3;
+                                    $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
+
+                                    $Paginator  = new Paginator( $conn, $query );
+
+                                    $results    = $Paginator->getData( $limit, $page );
+
+
+                                   for( $i = 0; $i < count( $results->data ); $i++ ){
+                                  
+                                      echo"<tr>";
+                                        echo"<td>".$results->data[$i]['titlu']."</td>
+                                        <td>".$results->data[$i]['autor']."</td>
+                                        <td>".$results->data[$i]['pret']."</td>
+                                        <td>".$results->data[$i]['editura']."</td>
+                                        <td>".$results->data[$i]['categorie']."</td>
+                                        <td>".$results->data[$i]['volum']."</td>
+                                        <td>".$results->data[$i]['disponibilitate']."</td>
+                                      </tr>";
+                                    }
+
+                            echo "</tbody>
+                        </table>
+                    </div>";
+
+                   echo $Paginator->createLinks( $links, 'pagination pagination-sm' );
+                 }}
+                    ?>
+              </div>
+          </div>
+      </div>
   </div>
 
 
 
 
-
-      <!-- FOOTER -->
-      <footer class="container">
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2015 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-      </footer>
 
     </div><!-- /.container -->
 

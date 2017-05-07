@@ -241,9 +241,9 @@ include_once 'function.php';
                 <a class="navbar-brand" href="index.html">Administrare biblioteca</a>
             </div>
             <!-- Top Menu Items -->
-            <?php// include_once "menu_top.php" ?>
+            <?phpinclude_once "menu_top.php" ?>
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-              <?php //include_once 'menu.php'; ?>
+              <?php include_once 'menu.php'; ?>
             <!-- /.navbar-collapse -->
         </nav>
 
