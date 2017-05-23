@@ -54,7 +54,7 @@ $sql="CREATE TABLE carte(
   autor VARCHAR(30) NOT NULL,
   pret INT(4) NOT NULL,
   volum int(3),
-  disponibilitate int(1),
+  disponibilitate int(1) NOT NULL default 0,
   editura VARCHAR(30),
   categorie VARCHAR(30),
   PRIMARY KEY (nr_inv)
@@ -82,11 +82,9 @@ echo '<br>';
 
 // tabela imprumuturilor
 $sql="CREATE TABLE imprumut(
-  id INT(5) NOT NULL AUTO_INCREMENT,
+  id INT(10) NOT NULL AUTO_INCREMENT,
   data_imprumut TIMESTAMP NOT NULL,
-  data_restituire TIMESTAMP,
-  intarziat INT(2),
-  suma_restanta INT (5),
+  data_restituire DateTime,
   nr_matr VARCHAR(7) NOT NULL,
   id_carte INT (10) NOT NULL,
   PRIMARY KEY(id),
@@ -100,5 +98,39 @@ else
   echo "something went wrong: ".$conn->error;
 echo '<br>';
 
+$sql="CREATE TABLE conturi(
+  id INT(6) NOT NULL AUTO_INCREMENT,
+  nume VARCHAR(20) NOT NULL,
+  prenume VARCHAR(20) NOT NULL,
+  username VARCHAR(20) NOT NULL,
+  password VARCHAR(33) NOT NULL,
+  clasa varchar(5) NOT NULL,
+  PRIMARY KEY (id)
+)";
+
+if($conn->query($sql)){
+  echo "Table conturi created";
+}
+else {
+  echo "Something went wrong:".$conn->error;
+}
+echo '<br>';
+
+$sql="CREATE TABLE rezervari(
+  id int(6) NOT NULL AUTO_INCREMENT,
+  data_rezervare TIMESTAMP,
+  nr_matr VARCHAR(7),
+  nr_inv INT(10),
+  PRIMARY KEY(id),
+  FOREIGN KEY (nr_matr) REFERENCES elev(nr_matricol),
+  FOREIGN KEY (nr_inv) REFERENCES carte(nr_inv)
+)";
+
+if($conn->query($sql)){
+  echo "Table rezervari created";
+}
+else {
+  echo "Something went wrong:".$conn->error;
+}
 
 ?>

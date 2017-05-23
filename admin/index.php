@@ -1,5 +1,6 @@
 <?php
 include_once 'session.php';
+include_once 'classUser.php';
 include_once 'function.php';
 ?>
 <!DOCTYPE html>
@@ -36,9 +37,10 @@ include_once 'function.php';
 
     <?php
     $conn=new mysqli("localhost","root","","biblioteca");
-
+    require_once "errors.php" ;
     global $add_rec, $res_rec;
     $add_rec=$res_rec=0;
+                  $errors=array();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // collect value of input field
         $nume = htmlspecialchars($_REQUEST['nume']);
@@ -46,85 +48,164 @@ include_once 'function.php';
         $nr_matricol=htmlspecialchars($_REQUEST['nr_mat']);
         $clasa=htmlspecialchars($_REQUEST['clasa']);
         $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
+
+        $limita_carti=3;
+        $nr;
         $results=array();
         $user_imp=array();
         $restanta=array();
+        $rez=array();
+
+
 
     if(isset($_POST['imprumut'])){
-    if($nr_matricol){
-    $sql = "INSERT INTO imprumut (nr_matr, data_imprumut, id_carte)
-            VALUES ('$nr_matricol', CURDATE(),'$nr_inv')";
 
-      if ($conn->query($sql)){
-        $add_rec=1;
-      }
+      $rez=$conn->query("SELECT * FROM carte WHERE nr_inv='$nr_inv'");
+      $results=$rez->fetch_assoc();
+
+      if($rez->num_rows==0)
+        $errors[]="Aceasta carte nu exista";
+      else
+        if($results['disponibilitate']!=0)
+            $errors[]="Aceasta carte nu este disponibila";
+        else
+    if($nr_matricol){
+
+      $rezervat=0;
+
+      $sql="SELECT * FROM imprumut WHERE nr_matr='$nr_matricol' AND data_restituire IS NULL";
+      $nr=$conn->query($sql);
+
+      $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1 AND nr_inv='$nr_inv'";
+      $rez=$conn->query($sql);
+
+
+        if($rez->num_rows==1)
+          $rezervat=1;
+
+      if($nr->num_rows<$limita_carti){
+
+        if ($conn->query("INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',CURDATE(),'$nr_inv')"))
+          $add_rec=1;
+
+        if($rezervat==1){
+          $rez=$rez->fetch_assoc();
+          $conn->query("DELETE FROM rezervari WHERE id='$rez[id]'");
+        }
+
+      $sql="UPDATE carte SET disponibilitate='1' WHERE nr_inv='$nr_inv'";
+      $conn->query($sql);
     }
 
     else {
+      $errors[]="Acest elev are deja 3 carti imprumutate";
+    }
+}
 
-    $sql="SELECT * FROM imprumut WHERE nume==='$nume' AND prenume==='$prenume' AND clasa==='$clasa'";
+    else {
+      $rezervat=0;
+    $sql="SELECT * FROM elev WHERE nume='$nume' AND prenume='$prenume' AND clasa='$clasa'";
 
     $results =$conn->query($sql);
-    if($results){
+
+    if($results->num_rows>0){
+
     $user_imp=$results->fetch_assoc();
+
     $results->free();
 
-    $sql = "INSERT INTO imprumut (nr_matr, id_carte, data_imprumut)
-            VALUES ('$user_imp[nr_mat]', '$nr_inv', CURDATE())";
+    $nr_matricol=$user_imp['nr_matricol'];
 
-      if ($conn->query($sql)) {
-        $add_rec=1;
+    $sql="SELECT * FROM imprumut WHERE nr_matr='$nr_matricol' AND data_restituire IS NULL";
+
+    $nr=$conn->query($sql);
+
+    $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1 AND nr_inv='$nr_inv'";
+
+    $rez=$conn->query($sql);
+
+      if($rez->num_rows==1)
+        $rezervat=1;
+
+    if($nr->num_rows<$limita_carti){
+
+        $sql="INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',GETDATE,'$nr_inv')";
+
+      if($rezervat==1){
+        $rez=$rez->fetch_assoc();
+        $conn->query("DELETE FROM rezervari WHERE id='$rez[id]'");
       }
-        $user_imp->free();
-      }
+
+            if ($conn->query($sql)){
+              $add_rec=1;
+    }
+      $sql="UPDATE carte SET disponibilitate='1' WHERE nr_inv='$nr_inv'";
+      $conn->query($sql);
+          }
+          else
+            $errors[]="Acest elev are deja 3 carti imprumutate";
+    }
+
+    else {
+      $errors[]="Acest elev nu exista";
     }
     }
+    }
+  }
+
+
+
     //restituire carte
-
-
     if(isset($_POST['restituire'])){
+
+
       if($nr_matricol){
 
-        $sql = "SELECT DATEDIFF (CURDATE(), data_imp) FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14 AND id_elev='$nr_matricol' AND id_carte='$nr_inv' AND data_res IS NULL";
+        $sql = "SELECT DATEDIFF (CURDATE(), data_imprumut) AS diferenta, id FROM imprumut WHERE nr_matr='$nr_matricol' AND id_carte='$nr_inv' AND data_restituire IS NULL";
 
-        $result = $conn->query($sql);
-        if($results){
-        $restanta = $result->fetch_assoc();
+        $results = $conn->query($sql);
+        if($results->num_rows==1){
 
-        $sql = "UPDATE imprumut SET data_res=CURDATE()
-                WHERE id_elev='$nr_matricol' AND id_carte='$nr_inv' AND data_res IS NULL";
 
-      if ($conn->query($sql)) {
-        $res_rec=1;
+        $restanta = $results->fetch_assoc();
+
+        $sql = "UPDATE imprumut SET data_restituire=CURDATE()
+                WHERE nr_matr='$nr_matricol' AND id_carte='$nr_inv' AND data_restituire IS NULL";
+                if ($conn->query($sql)) {
+                  $res_rec=1;
         }
-        $result->free();
-        $restanta->free();
+        $sql="UPDATE carte SET disponibilitate='0' WHERE nr_inv='$nr_inv'";
+        $conn->query($sql);
+        $results->free();
       }
     }
     else {
 
     $sql = "SELECT nr_matricol FROM elev WHERE nume='$nume' AND prenume='$prenume' AND clasa='$clasa'";
 
-    $result =$conn->query($sql);
-    if($results){
-    $user_imp =$result->fetch_assoc();
-    $result->free();
+    $results =$conn->query($sql);
 
-    $sql = "SELECT DATEDIFF (CURDATE(), data_imp) FROM imprumut WHERE DATEDIFF (CURDATE(), data_imp) > 14 AND id_elev='$user_imp[nr_matr]' AND id_carte='$nr_inv' AND data_res IS NULL";
+    if($results->num_rows>0){
 
-    $result = $conn->query($sql);
-    $restanta = $result->fetch_assoc();
+    $user_imp =$results->fetch_assoc();
+    $results->free();
 
-    $sql = "UPDATE imprumut SET data_res=CURDATE()
-            WHERE id_elev='$user_imp[nr_matr]' AND id_carte='$nr_inv' AND data_res IS NULL";
+      $sql = "SELECT DATEDIFF (CURDATE(), data_imprumut) AS diferenta, id FROM imprumut WHERE nr_matr='$user_imp[nr_matricol]' AND id_carte='$nr_inv' AND data_restituire IS NULL";
+
+    $results = $conn->query($sql);
+
+    $restanta = $results->fetch_assoc();
+
+    $sql = "UPDATE imprumut SET data_restituire=CURDATE()
+            WHERE nr_matr='$user_imp[nr_matricol]' AND id_carte='$nr_inv' AND data_restituire IS NULL";
       if ($conn->query($sql)) {
         $res_rec=1;
+        $sql="UPDATE carte SET disponibilitate='0' WHERE nr_inv='$nr_inv'";
+        $conn->query($sql);
     }
     }
     }
     }
-    }
-
 
     ?>
 
@@ -192,25 +273,30 @@ include_once 'function.php';
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                      <?php if($restanta['DATEDIFF (CURDATE(), data_imp)'] > 0){ ?>
+                      <?php if($restanta['diferenta'] > 0){ ?>
                         <div class="alert alert-danger alert-dismissable">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                             <i class="fa fa-info-circle"></i>
                             <strong>
                               <?php
-                                if($restanta['DATEDIFF (CURDATE(), data_imp)'] > 0)
-                                  if($restanta['DATEDIFF (CURDATE(), data_imp)'] == 1)
-                                    echo $restanta['DATEDIFF (CURDATE(), data_imp)'] . " zi intarziere";
+                                if($restanta['diferenta'] > 0)
+                                  if($restanta['diferenta'] == 1)
+                                    echo $restanta['diferenta'] . " zi intarziere";
                                   else
-                                    echo $restanta['DATEDIFF (CURDATE(), data_imp)'] . " zile intarziere";
+                                    echo $restanta['diferenta'] . " zile intarziere";
                                   ?>
                             </strong>
                         </div>
                         <?php } ?>
                     </div>
                 </div>
-
                 <?php } ?>
+
+                <?php
+                foreach ($errors as $index => $error) {
+                  errors($error);
+                }
+                ?>
                 <!-- /.row -->
 
                 <div class="row">
@@ -334,7 +420,7 @@ include_once 'function.php';
                             <div class="panel-body">
                                 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
                                   <div class="form-group">
-                                      <input name="nr_inv" class="form-control" placeholder="Numar inventar carte" required>
+                                      <input name="nr_inv" class="form-control" placeholder="Numarul de inventar al cartii" required>
                                   </div>
                                   <div class="form-group">
                                     <input name="nr_mat" class="form-control" placeholder="Numar matricol elev">

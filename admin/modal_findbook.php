@@ -1,31 +1,30 @@
 <!-- Modal -->
+
 <div class="modal fade" id="find_book" tabindex="-1" role="dialog" aria-labelledby="find_bookLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="find_bookLabel">Adauga un elev</h4>
+        <h4 class="modal-title" id="find_bookLabel">Gaseste carti</h4>
       </div>
       <div class="modal-body">
-                    <form method="post">
-                      <input type="hidden" name="type" value="findbook" id="findbook">
-                        <input class="form-control" type="text" name="nr_inv" placeholder="Numar inventar" required>
-                        <br>
-                        <br>
-                        <p> Sau cautati carti dupa alte caracteristici</p>
-                        <input class="form-control" type="text" name="titlu" placeholder="Titlu" required>
-                        <br>
-                        <input class="form-control" type="text" name="nr_inv" placeholder="Numar inventar" required>
-                        <input class="form-control" type="text" name="autor" placeholder="Autor" required>
-                        <br>
-                        <input class="form-control" type="text" name="pret" placeholder="Pret" required>
-                        <input class="form-control" type="text" name="email" placeholder="Email" required>
-                        <br>
-
+        <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+          <div class="form-group">
+              <input name="titlu" class="form-control" placeholder="Titlul cartii">
+          </div>
+          <div class="form-group">
+              <input name="volum" class="form-control" placeholder="Volumul cartii">
+          </div>
+          <div class="form-group">
+              <input name="autor" class="form-control" placeholder="Autorul cartii">
+          </div>
+          <div class="form-group">
+            <input name="editura" class="form-control" placeholder="Editura">
+          </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn-primary" onclick='' data-dismiss="modal">Close</button>
-        <input type="submit" class="btn-primary" name="findbook" value="Gaseste">
+        <button type="button" class="btn btn-primary" onclick='' data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" name="findbook" value="Gaseste">
       </form>
       </div>
     </div>
@@ -35,36 +34,28 @@
 
 <?php
 
+//include_once "session.php";
+
 $conn=new mysqli("localhost","root","","biblioteca");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // collect value of input field
 
-    $nr_inventar= htmlspecialchars($_REQUEST['nr_inv']);
-    $titlu=htmlspecialchars($_REQUEST['titlu']);
-    $autor=htmlspecialchars($_REQUEST['autor']);
-    $pret=htmlspecialchars($_REQUEST['pret']);
-    $volum=htmlspecialchars($_REQUEST['volum']);
-    $categorie=htmlspecialchars($_REQUEST['categorie']);
-    $editura=htmlspecialchars($_REQUEST['editura']);
-    $results=array();
-    $ceva=array();
+$OK=1;
 
-if(isset($_POST['findbook'])){
-    $sql="SELECT * FROM carte WHERE nr_inv='$nr_inventar'";
-    $results=$conn->query($sql);
-    if($results->num_rows>0){
-      echo "Ati mai introdus acest numar de inventar";
-      }
-    else{
-       $sql = "INSERT INTO carte (nr_inv, titlu, autor, pret, volum, categorie,editura)
-            VALUES ('$nr_inventar', '$titlu', '$autor','$pret', '$volum', '$categorie','$editura')";
+//  $categorie=htmlspecialchars($_REQUEST['categorie']); if($categorie=="Toate cartile") $categorie="%";
+$categorie='%';
+  if(isset($_POST['findbook'])){
+    $titlu=htmlspecialchars($_REQUEST['titlu']); if($titlu==NULL) $titlu='%';
+    $autor=htmlspecialchars($_REQUEST['autor']); if($autor==NULL) $autor='%';
+    $editura=htmlspecialchars($_REQUEST['editura']); if($editura==NULL) $editura='%';
+    $volum=htmlspecialchars($_REQUEST['volum']); if($volum==NULL) $volum='%';
 
-          if($conn->query($sql))
-            echo "success";
-          else
-            echo $conn->error;
-}
-}
-}
- ?>
+    $_SESSION['query_de_carti']="SELECT * FROM carte WHERE titlu LIKE '$titlu' AND autor LIKE '$autor' AND volum LIKE '$volum' AND editura LIKE '$editura' AND categorie LIKE '$categorie'";
+
+ echo '<script type="text/javascript">
+ window.location = "rezultate.php"
+ </script>';
+}}
+
+
+?>

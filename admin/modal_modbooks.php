@@ -25,8 +25,8 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn-primary" onclick='' data-dismiss="modal">Close</button>
-        <input type="submit" class="btn-primary" name="modbook" value="Modifica">
+        <button type="button" class="btn btn-primary" onclick='' data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" name="modbook" value="Modifica">
       </form>
       </div>
     </div>
@@ -40,17 +40,20 @@ $conn=new mysqli("localhost","root","","biblioteca");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // collect value of input field
-    $nr_inventar= htmlspecialchars($_REQUEST['nr_inv']);
-    $titlu=htmlspecialchars($_REQUEST['titlu']);
-    $autor=htmlspecialchars($_REQUEST['autor']);
-    $pret=htmlspecialchars($_REQUEST['pret']);
-    $volum=htmlspecialchars($_REQUEST['volum']);
-    $categorie=htmlspecialchars($_REQUEST['categorie']);
-    $editura=htmlspecialchars($_REQUEST['editura']);
+
     $results=array();
     $ceva=array();
 
 if(isset($_POST['modbook'])){
+  $GLOBALS['OK']=0;
+
+      $titlu=htmlspecialchars($_REQUEST['titlu']);
+      $autor=htmlspecialchars($_REQUEST['autor']);
+      $volum=htmlspecialchars($_REQUEST['volum']);
+      $editura=htmlspecialchars($_REQUEST['editura']);
+  $nr_inventar= htmlspecialchars($_REQUEST['nr_inv']);
+    $categorie=htmlspecialchars($_REQUEST['categorie']);
+    $pret=htmlspecialchars($_REQUEST['pret']);
     $sql="SELECT * FROM carte WHERE nr_inv='$nr_inventar'";
     $results=$conn->query($sql);
 
@@ -83,7 +86,12 @@ if(isset($_POST['modbook'])){
         }
     else
       echo "Nu exista aceasta carte in inregistrari";
+      echo '<script type="text/javascript">
+     window.location = "index.php"
+</script>';
     }
+
+
 
 }
 

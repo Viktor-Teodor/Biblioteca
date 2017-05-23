@@ -1,5 +1,7 @@
 <?php
 include_once 'session.php';
+ //session_start();
+include_once 'classUser.php';
 include_once 'function.php';
 ?>
 <!DOCTYPE html>
@@ -77,6 +79,8 @@ include_once 'function.php';
                   <?php //include_once 'modal.php'; ?>
                   <?php include_once 'modal_addbooks.php'; ?>
                   <?php include_once 'modal_modbooks.php'; ?>
+                  <?php include_once 'modal_findbook.php';?>
+                  <?php include_once 'modal_deletebook.php';?>
                 <!-- /.control for add and delete -->
                   <div class="row">
                       <div class="col-lg-3 col-md-6">
@@ -143,7 +147,7 @@ include_once 'function.php';
                                   </div>
                               </div>
                               <a href="#">
-                                  <div class="panel-footer">
+                                  <div class="panel-footer" data-toggle="modal"  data-target="#find_book">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                       <div class="clearfix"></div>
@@ -168,7 +172,7 @@ include_once 'function.php';
                                   </div>
                               </div>
                               <a href="#">
-                                  <div class="panel-footer">
+                                  <div class="panel-footer" data-toggle="modal"  data-target="#delete_book">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                       <div class="clearfix"></div>
@@ -204,19 +208,18 @@ include_once 'function.php';
                                           </thead>
                                           <tbody>
                                                   <?php
-                                                   require_once 'paginator.php';
+                                                  require_once 'paginator.php';
+                                                  $disp=array(1=>"Carte imprumutata", -1=>"Carte rezervata", 0=>"Carte disponibila");
 
-                                                  $conn=new mysqli("localhost","root","","biblioteca");
+                                                 $limit=10;
+                                                 $links=3;
+                                                 $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
 
-                                                  $limit=10;
-                                                  $links=3;
-                                                  $query = "SELECT * FROM carte ORDER BY nr_inv ASC";
-                                                  $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
+                                                        $query="SELECT * FROM carte";
 
                                                   $Paginator  = new Paginator( $conn, $query );
 
                                                   $results    = $Paginator->getData( $limit, $page );
-
 
                                                  for( $i = 0; $i < count( $results->data ); $i++ ){  ?>
                                                     <tr>
@@ -227,9 +230,9 @@ include_once 'function.php';
                                                       <td><?php echo $results->data[$i]['editura']; ?></td>
                                                       <td><?php echo $results->data[$i]['categorie']; ?></td>
                                                       <td><?php echo $results->data[$i]['volum']; ?></td>
-                                                      <td><?php echo $results->data[$i]['disponibilitate']; ?></td>
+                                                      <td><?php  echo$disp[$results->data[$i]['disponibilitate']] ?></td>
                                                     </tr>
-                                                  <?php } ?>
+                                                  <?php  } ?>
 
                                           </tbody>
                                       </table>
