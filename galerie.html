@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Carousel Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+ <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styles for this template -->
+    <link href="main.css" rel="stylesheet">
+  </head>
+<!-- NAVBAR
+================================================== -->
+  <body style="padding-top:2em; background-color:#001a33;">
+  <div class="box-wrap">
+
+    <nav style="padding-bottom: 0px; margin-bottom: 0px; background-color: #262626"  class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Biblioteca D.C.</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="index.php">Acasă</a>
+                    </li>
+                    <li>
+                        <a href="cartielevi.php">Cărți</a>
+                    </li>
+                    <li  class="active">
+                        <a href="galerie.html">Galerie</a>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="Nume" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Parola" class="form-control">
+            </div>
+            <button style="background-color: #0d0d0d; border-color: #0d0d0d;" type="submit" class="btn btn-success">Log in</button>
+            <button style="background-color: #0d0d0d; border-color: #0d0d0d;" type="submit" class="btn btn-success">Sign up</button>
+          </form>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+
+    <!-- Carousel
+    ================================================== -->
+<br>
+<br>
+<br>
+<p style="font-size: 45px">Galerie foto</p>
+<br>
+<br>
+<br>
+        <h1 align="center">Din bibliotecă</h1>
+    <br>
+    <br>
+                  <div class="aliniere">
+         <div id="myCarousel1" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel1" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel1" data-slide-to="1"></li>
+        <li data-target="#myCarousel1" data-slide-to="2"></li>
+        <li data-target="#myCarousel1" data-slide-to="3"></li>
+        <li data-target="#myCarousel1" data-slide-to="4"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img id="baner" class="first-slide" src="poze/poza24.jpg" alt="First slide">
+        </div>
+        <div class="item">
+          <img id="baner" class="second-slide" src="poze/poza25.jpg" alt="Second slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="third-slide" src="poze/poza26.jpg" alt="Third slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+                <div class="item">
+          <img id="baner" class="fourth-slide" src="poze/poza23.jpg" alt="Fourth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="fifth-slide" src="poze/poza27.jpg" alt="Fifth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel1" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel1" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+</div><!-- /.carousel -->
+
+<br>
+        <h1 align="center">Activitate metodică Chișinău</h1>
+    <br>
+    <br>
+<div class="aliniere">
+         <div id="myCarousel2" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel2" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel2" data-slide-to="1"></li>
+        <li data-target="#myCarousel2" data-slide-to="2"></li>
+        <li data-target="#myCarousel2" data-slide-to="3"></li>
+        <li data-target="#myCarousel2" data-slide-to="4"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img id="baner" class="first-slide" src="poze/poza8.jpg" alt="First slide">
+        </div>
+        <div class="item">
+          <img id="baner" class="second-slide" src="poze/poza9.jpg" alt="Second slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="third-slide" src="poze/poza10.jpg" alt="Third slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+                <div class="item">
+          <img id="baner" class="fourth-slide" src="poze/poza11.jpg" alt="Fourth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="fifth-slide" src="poze/poza12.jpg" alt="Fifth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel2" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel2" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+</div><!-- /.carousel -->
+
+
+<br>
+        <h1 align="center">Donează acum şi ajută un copil să zâmbească</h1>
+    <br>
+    <br>
+<div class="aliniere">
+         <div id="myCarousel3" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel3" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel3" data-slide-to="1"></li>
+        <li data-target="#myCarousel3" data-slide-to="2"></li>
+        <li data-target="#myCarousel3" data-slide-to="3"></li>
+        <li data-target="#myCarousel3" data-slide-to="4"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img id="baner" class="first-slide" src="poze/poza13.jpg" alt="First slide">
+        </div>
+        <div class="item">
+          <img id="baner" class="second-slide" src="poze/poza14.jpg" alt="Second slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="third-slide" src="poze/poza15.jpg" alt="Third slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+                <div class="item">
+          <img id="baner" class="fourth-slide" src="poze/poza16.jpg" alt="Fourth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="fifth-slide" src="poze/poza17.jpg" alt="Fifth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel3" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel3" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+</div><!-- /.carousel -->
+
+
+<br>
+        <h1 align="center">Activitate Cluj 2015</h1>
+    <br>
+    <br>
+<div class="aliniere">
+         <div id="myCarousel4" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel4" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel4" data-slide-to="1"></li>
+        <li data-target="#myCarousel4" data-slide-to="2"></li>
+        <li data-target="#myCarousel4" data-slide-to="3"></li>
+        <li data-target="#myCarousel4" data-slide-to="4"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img id="baner" class="first-slide" src="poze/poza18.jpg" alt="First slide">
+        </div>
+        <div class="item">
+          <img id="baner" class="second-slide" src="poze/poza19.jpg" alt="Second slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="third-slide" src="poze/poza20.jpg" alt="Third slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+                <div class="item">
+          <img id="baner" class="fourth-slide" src="poze/poza21.jpg" alt="Fourth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+        <div class="item">
+          <img id="baner" class="fifth-slide" src="poze/poza22.jpg" alt="Fifth slide">
+          <div class="container">
+          <div class="carousel-caption">
+
+
+
+          </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel4" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel4" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+</div><!-- /.carousel -->
+
+
+
+
+
+
+
+
+     <hr>
+      <!-- FOOTER -->
+      <footer class="container">
+        <p class="pull-right"><a href="#">Înapoi sus</a></p>
+        <p>&copy; 2017 Stoian Victor-Teodor, Hapenciuc George, Strilciuc Gabriel, Parfeni Teodor</p>
+      </footer>
+
+    </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="../../assets/js/vendor/holder.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

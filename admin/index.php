@@ -66,7 +66,7 @@ include_once 'function.php';
       if($rez->num_rows==0)
         $errors[]="Aceasta carte nu exista";
       else
-        if($results['disponibilitate']!=0)
+        if($results['disponibilitate']==1)
             $errors[]="Aceasta carte nu este disponibila";
         else
     if($nr_matricol){

@@ -21,8 +21,8 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick='' data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" name="adduser" value="Adauga">
+        <button type="button" class="btn-primary" onclick='' data-dismiss="modal">Close</button>
+        <input type="submit" class="btn-primary" name="adduser" value="Adauga">
       </form>
       </div>
     </div>

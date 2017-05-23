@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<?php     require_once('admin/session.php');
+require_once('admin/classUser.php');
+$errors=array();
+$login=new user();
+?>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -53,24 +58,36 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="Principal.php">Acasa</a>
+                        <a href="index.php">Acasa</a>
                     </li>
                     <li class="active">
                         <a href="#">Carti</a>
                     </li>
                     <li>
-                        <a href="#">Contact</a>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                    <li>
+                        <a href="galerie.html">Galerie</a>
                     </li>
                 </ul>
+                <?php  if(!$login->is_loggedin()){?>
                 <form class="navbar-form navbar-right" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
             <div class="form-group">
-              <input type="text" name="username" placeholder="Nume" class="form-control">
+              <input type="text" name="username" placeholder="Username" class="form-control">
             </div>
             <div class="form-group">
               <input type="password" name="pass" placeholder="Parola" class="form-control">
             </div>
             <button name="login" style="background-color: #0d0d0d; border-color: #0d0d0d;" type="submit" class="btn btn-success">Log in</button>
+
           </form>
+          <?php }
+          else {
+            echo '<form class="navbar-form navbar-right" method="post">';
+            echo '<span style="color:white">'.$_SESSION['user_nume'].' '.$_SESSION['user_prenume'].'</span>';
+            echo "<span style='padding-left:25px'><a href='logout.php'><button type='button' class='btn btn-default xs' style='background-color: #0d0d0d; border-color: #0d0d0d;'> Log out<?button></a></span>";
+          //  echo '</ul>';
+        }?>
             </div>
             <!-- /.navbar-collapse -->
         </div>
@@ -78,24 +95,26 @@
     </nav>
 
     <?php
-    require_once('admin/classUser.php');
-    require_once('admin/session.php');
 
-                  $login=new user();
+    if(!$login->is_loggedin())
+      $_SESSION['logg']=0;
+
       if(isset($_POST['login']))
       {
+
         $uname = htmlspecialchars($_POST['username']);
         $upass = htmlspecialchars($_POST['pass']);
+
         if($login->doLogin($uname,$upass))
         {
-          if($uname="ADMIN")
+          if($uname=="Admin")
              $login->redirect('admin/index.php');
-          else
-            $login->redirect('Principal.php');
+          else{
+            $_SESSION['logg']=1;$login->redirect('index.php');}
         }
         else
         {
-          $error = "Wrong Details !";
+          $errors[] = "Wrong Details !";
         }
       }
       ?>
@@ -105,8 +124,98 @@
     ================================================== -->
     <img style="margin-bottom: 40px;" src="image5.jpg" width="100%" height="550px">
 
+    <?php if($_SESSION['logg']==1){ ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <i class="fa fa-info-circle"></i>  <strong>Succes</strong>V-ati log-at cu succes !
+            </div>
+        </div>
+    </div>
+
+    <?php $_SESSION['logg']=0;}  ?>
+
+
+
+
  <div class="container" style="padding-bottom:300px">
   <div class="row">
+    <div class="col-lg-6 col-md-offset-3">
+            <div class="panel-body">
+                <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+                  <div class="form-group">
+                      <input name="nr_inv" class="form-control" placeholder="Numarul de inventar al cartii pe care doriti sa o rezervati pentru 24 de ore" required>
+                  </div>
+                  <div class="form-group">
+                    <input type="submit" align="right" class="btn btn-default" name="rezerva" value="rezerva">
+                  </div>
+</div>
+</div>
+<?php
+$succ=0;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $conn=new mysqli("localhost","root","","biblioteca");
+
+  if(isset($_POST['rezerva'])){
+
+$nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
+$rez=$conn->query("SELECT * FROM rezervari WHERE DATEDIFF(CURDATE(),data_rezervare)>1");
+while($rez->num_rows){
+  $row=$rez->fetch_assoc();
+  $conn->query("UPDATE carte SET disponibilitate=0 WHERE nr_inv='$row[nr_inv]'");
+  $conn0>query("DELETE FROM rezervari WHERE nr_inv='$row[nr_inv]'");
+}
+ $rez=$conn->query("SELECT * FROM carte WHERE nr_inv=$nr_inv");
+
+ if($rez->num_rows!=1)
+   $errors[]="Aceasta carte nu exista";
+   else{
+     $rez=$rez->fetch_assoc();
+     if($rez['disponibilitate']!=0)
+      $errors[]="Aceasta carte nu este disponibila";
+     else{
+       $rez=$conn->query("SELECT * FROM elev WHERE nume='$_SESSION[user_nume]' AND prenume='$_SESSION[user_prenume]' AND clasa='$_SESSION[user_clasa]'");
+       $rez=$rez->fetch_assoc();
+       $nr_matricol=$rez['nr_matricol'];
+
+       $rez=$conn->query("SELECT * FROM rezervari WHERE nr_matr='$nr_matricol'");
+
+       if($rez->num_rows>=3)
+        $errors[]="Ati rezervat deja 3 carti, asteptati pana la expirarea unei rezervari sau anulati rezervarea";
+      else
+          if($conn->query("INSERT INTO rezervari(data_rezervare, nr_matr,nr_inv) VALUES (CURDATE(),'$nr_matricol','$nr_inv')")){
+            $succ=1;
+            $conn->query("UPDATE carte SET disponibilitate=-1 WHERE nr_inv='$nr_inv'");
+          }
+  }
+}
+}
+}
+?>
+
+
+<?php if($succ==1){ $succ=0; ?>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <i class="fa fa-info-circle"></i>  <strong>Succes</strong> Ati rezervat cartea pentru 24 de ore !
+        </div>
+    </div>
+</div>
+
+<?php }  ?>
+
+<?php
+include_once "admin/errors.php";
+foreach ($errors as $index => $error) {
+  errors($error);
+}
+$errors=array();
+?>
+
     <div class="col-lg-6 col-md-offset-3">
             <div class="panel-body">
                 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -166,6 +275,7 @@
                         </thead>
                         <tbody>
                                 <?php
+
                                 $disp=array(1=>"Carte imprumutata", -1=>"Carte rezervata", 0=>"Carte disponibila");
                                 $titlu='%';
                                 $autor='%';
@@ -173,13 +283,14 @@
                                 $volum='%';
                                 $categorie="%";
                                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                                  if(isset($_POST['cauta'])){
                                 $disp=array(1=>"Carte imprumutata", -1=>"Carte rezervata", 0=>"Carte disponibila");
                                 $titlu=htmlspecialchars($_REQUEST['titlu']); if($titlu==NULL) $titlu='%';
                                 $autor=htmlspecialchars($_REQUEST['autor']); if($autor==NULL) $autor='%';
                                 $editura=htmlspecialchars($_REQUEST['editura']); if($editura==NULL) $editura='%';
                                 $volum=htmlspecialchars($_REQUEST['volum']); if($volum==NULL) $volum='%';
                                 $categorie=htmlspecialchars($_REQUEST['categorie']); if($categorie=="Toate cartile") $categorie="%";
-}
+                                }}
                                 require_once 'admin/paginator.php';
 
                                 $conn=new mysqli("localhost","root","","biblioteca");
@@ -194,7 +305,6 @@
                                 $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
                                 $Paginator  = new Paginator( $conn, $query );
                                 $results    = $Paginator->getData( $limit, $page );
-
                                 for( $i = 0; $i < count( $results->data ); $i++ ){  ?>
                                    <tr>
                                      <td><?php echo $results->data[$i]['nr_inv']; ?></td>

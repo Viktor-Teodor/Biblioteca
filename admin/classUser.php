@@ -21,7 +21,7 @@ class user{
 
   public function doLogin($username,$pass){
       $pass=hash('tiger128,3',$pass);
-			$stmt = $this->_conn->query("SELECT id, username, password, nume, prenume FROM conturi WHERE username='$username'");
+			$stmt = $this->_conn->query("SELECT id, username, password, nume, prenume, clasa FROM conturi WHERE username='$username'");
 
 			$userRow=$stmt->fetch_assoc();
 
@@ -29,6 +29,7 @@ class user{
 			{
 				if($pass == $userRow['password'])
 				{
+          $_SESSION['user_clasa']=$userRow['clasa'];
 					$_SESSION['user_session'] = $userRow['id'];
 					$_SESSION['user_nume'] = $userRow['nume'];
 					$_SESSION['user_prenume'] = $userRow['prenume'];
