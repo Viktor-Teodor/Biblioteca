@@ -129,7 +129,7 @@ $login=new user();
       </ol>
       <div class="carousel-inner" role="listbox">
         <div class="item active">
-          <img class="first-slide" src="image1.jpeg" alt="First slide">
+          <img class="first-slide" src="poze/poza1.jpg" alt="First slide">
           <div class="container">
             <div class="carousel-caption">
 
@@ -137,7 +137,7 @@ $login=new user();
           </div>
         </div>
         <div class="item">
-          <img  class="second-slide" src="image2.jpg" alt="Second slide">
+          <img  class="second-slide" src="poze/poza3.jpg" alt="Second slide">
           <div class="container">
             <div class="carousel-caption">
 
@@ -145,7 +145,7 @@ $login=new user();
           </div>
         </div>
         <div class="item">
-          <img class="third-slide" src="image3.jpg" alt="Third slide">
+          <img class="third-slide" src="poze/poza4.jpg" alt="Third slide">
           <div class="container">
             <div class="carousel-caption">
 
@@ -168,6 +168,9 @@ $login=new user();
     ================================================== -->
     <!-- Wrap the rest of the page in another container to center all the content. -->
         <div class="container">
+          <h2 align="center">Biblioteca Liceului Teoretic "Dimitrie Cantemir" Iași</h2>
+            <br>
+            <br>
           <?php if($_SESSION['logg']==1){ ?>
           <div class="row">
               <div class="col-lg-12">
@@ -181,38 +184,88 @@ $login=new user();
           <?php $_SESSION['logg']=0; }  ?>
     <div class="row">
 
-    <div class="col-md-6">
-    <h2 align="center">Biblioteca liceului teoretic "Dimitrie Cantemir" Iasi</h2>
-    <hr style="width: 78%;"">
-    <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p>
+      <p>Biblioteca Liceului Teoretic "Dimitrie Cantemir" din Iași a fost înființată o dată cu liceul, adică la data de 17 septembrie 1963.
+      Biblioteca şcolară este destinată sprijinirii procesului instructiv-educativ, satisfacerii cerinţelor de informare documentară, de lectură şi de studiu ale elevilor, cadrelor didactice şi a celorlalte categorii de personal. Prin “activitatea bibliotecii” se înţelege ansamblul acţiunilor legate de buna ei funcţionare: procurarea şi prelucrarea publicaţiilor, organizarea cataloagelor, întocmirea de bibliografii, servirea cititorilor, acţiuni de popularizare a cărţii etc., biblioteca participând la realizarea obiectivelor sistemului de învăţământ, în ansamblul său, precum şi a obiectivelor educaţionale pe niveluri de studii şi profiluri de învăţământ. Biblioteca împrumută publicaţii şi documente atât în timpul anului şcolar cât şi în timpul vacanţelor şcolare, exceptând perioadele de inventariere şi de concediu legal al bibliotecarului.
+      </p>
+      </div>
+      <br>
+      <br>
+      <div class="row">
+          <div class="col-md-6">
+          <img src="poze/poza2.jpg" width="550px" height="400px">
+          </div>
+          <div class="col-md-6">
+          <img src="poze/poza6.jpg" width="550px" height="400px">
+          </div>
+
+        </div>
+          <br>
+          <hr>
+
+          <br>
+          <div class="row">
+          <h2 align="center">
+          Misiunea bibliotecii
+          </h2>
+          <p>Biblioteca şcolară exercită un rol important în orientarea intelectuală a utilizatorilor săi, în informarea şi reţinerea gustului pentru lectură, pentru studiu, în scopul cristalizării unui sistem de informare propriu.
+            Prin activitatea sa, biblioteca şcolară participă la realizarea obiectivelor sistemului de învăţământ, în ansamblul său, precum şi a obiectivelor educaţionale pe etape de studiu.
+      </p>
+
     </div>
-    <div style="margin-top: 60px" class="col-md-6">
-    <img src="image4.jpg" width="600px" height="450px">
-    </div>
-    </div>
-    </div>
+  <br>
+  <hr>
+  <div class="row">
+  <h2 align="center">Fondul de carte</h2>
+  <p>Biblioteca are în posesie 27.641 de volume în valoare de 13.927,96 lei.</p>
+  <p>Structura fondului de carte:</p>
+
+  <ul style="list-style-type:none" class="lista">
+
+  <li>Ideologie - 297 cărți</li>
+  <li>Științe naturale și matematică - 3.316 cărți</li>
+  <li>Tehnică - 1.351 cărți</li>
+  <li>Agricultură - 24 cărți</li>
+  <li>Literatură - 13.162 cărți</li>
+  <li>Literatură pentru copii - 4.084 cărți</li>
+  <li>Alte materii - 5.407 cărți</li>
 
 
+  </ul>
+  </div>
+  <br>
+  <hr>
+  <div class="row">
+  <div class="col-md-6">
+  <h2 align="center">Bibliotecar actual</h2>
+  <p>Bibliotecar Elena Crăcană - 9 septembrie 1977 - prezent</p>
+  </div>
+  <div class="col-md-6">
+  <h2 align="center">Orarul de funcționare</h2>
+  <p>Luni - Miercuri - Vineri, orele 08:00 - 16:00</p>
+  <p> Marţi – Joi, orele 12:00 – 20:00</p>
+  </div>
+  </div>
 
-      <!-- FOOTER -->
-      <hr width="94%">
-      <footer class="container">
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2015 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-      </footer>
 
-    </div><!-- /.container -->
+  </div>
+    <hr>
+    <footer class="container">
+      <p class="pull-right"><a href="#">Înapoi sus</a></p>
+      <p>&copy; 2017 Stoian Victor-Teodor, Hapenciuc George, Strilciuc Gabriel, Parfeni Teodor</p>
+    </footer>
+
+<!-- /.container -->
 
 </div>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="../../assets/js/vendor/holder.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-  </body>
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+  <script src="../../dist/js/bootstrap.min.js"></script>
+  <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+  <script src="../../assets/js/vendor/holder.min.js"></script>
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
 </html>

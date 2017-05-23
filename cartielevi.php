@@ -329,6 +329,12 @@ $errors=array();
 </div>
 </div>
 
+<hr>
+      <!-- FOOTER -->
+      <footer class="container">
+        <p class="pull-right"><a href="#">Înapoi sus</a></p>
+        <p>&copy; 2017 Stoian Victor-Teodor, Hapenciuc George, Strilciuc Gabriel, Parfeni Teodor</p>
+      </footer>
 
     </div><!-- /.container -->
 
