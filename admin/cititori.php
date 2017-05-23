@@ -182,6 +182,9 @@ include_once 'function.php';
                 </div>
 
                   <?php include_once 'modal.php'; ?>
+                  <?php include_once 'modal_modreaders.php';?>
+                  <?php include_once 'modal_findreaders.php';?>
+                  <?php include_once 'modal_delreaders.php';?>
                 <!-- /.control for add and delete -->
                   <div class="row">
 
@@ -222,7 +225,7 @@ include_once 'function.php';
                                       </div>
                                   </div>
                               </div>
-                              <a href="#">
+                              <a href="#" data-toggle="modal" data-target="#mod_readers" >
                                   <div class="panel-footer">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -247,7 +250,7 @@ include_once 'function.php';
                                       </div>
                                   </div>
                               </div>
-                              <a href="#">
+                              <a href="#" data-toggle="modal" data-target="#find_readers">
                                   <div class="panel-footer">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -272,7 +275,7 @@ include_once 'function.php';
                                       </div>
                                   </div>
                               </div>
-                              <a href="#">
+                              <a href="#" data-toggle="modal" data-target="#del_reader">
                                   <div class="panel-footer">
                                       <span class="pull-left">View Details</span>
                                       <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -309,6 +312,8 @@ include_once 'function.php';
                                           </thead>
                                           <tbody>
                                                   <?php
+
+                                                  require_once 'paginator.php';
                                                   $conn=new mysqli("localhost","root","","biblioteca");
                                                   $result=array();
                                                   $row=array();
@@ -316,42 +321,41 @@ include_once 'function.php';
                                                   $sort=$_GET['sort'];
                                                   switch ($sort) {
                                                       case 0:
-                                                          $sql = "SELECT * FROM elev ORDER BY nume ASC";
+                                                          $query = "SELECT * FROM elev ORDER BY nume ASC";
                                                           break;
                                                       case 1:
-                                                          $sql = "SELECT * FROM elev WHERE clasa != 'prof' ORDER BY nume ASC";
+                                                          $query = "SELECT * FROM elev WHERE clasa != 'prof' ORDER BY nume ASC";
                                                           break;
                                                       case 2:
-                                                      $sql = "SELECT * FROM elev WHERE clasa = 'prof' ORDER BY nume ASC";
+                                                      $query = "SELECT * FROM elev WHERE clasa = 'prof' ORDER BY nume ASC";
                                                           break;
                                                       default:
-                                                      $sql = "SELECT * FROM elev ORDER BY nume ASC";
+                                                      $query = "SELECT * FROM elev ORDER BY nume ASC";
 
                                                   }
-                                                    $result = $conn->query($sql);
+                                                  $limit=10;
+                                                  $links=3;
+                                                  $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
+                                                  $Paginator  = new Paginator( $conn, $query );
+                                                  $results    = $Paginator->getData( $limit, $page );
 
-                                                    if ($result->num_rows > 0) {
-                                                        // output data of each row
-                                                        while($row = $result->fetch_assoc()) {
-                                                            echo '
-                                                            <tr>
-                                                            <td>'.$row["nr_matricol"].'</td>
-                                                            <td>'.$row["nume"].'</td>
-                                                            <td>'.$row["prenume"].'</td>
-                                                            <td>'.$row["clasa"].'</td>
-                                                            <td>'.$row["telefon"].'</td>
-                                                            <td>'.$row["email"].'</td>
-                                                            </tr>';
-                                                        }
-                                                    } else {
-                                                        echo "0 results";
-                                                    }
-                                                    $result->free();
-                                                    $conn->close();
+                                                  for( $i = 0; $i < count( $results->data ); $i++ ){  ?>
+                                                     <tr>
+                                                       <td><?php echo $results->data[$i]['nr_matricol']; ?></td>
+                                                       <td><?php echo $results->data[$i]['nume']; ?></td>
+                                                       <td><?php echo $results->data[$i]['prenume']; ?></td>
+                                                       <td><?php echo $results->data[$i]['clasa']; ?></td>
+                                                       <td><?php echo $results->data[$i]['telefon']; ?></td>
+                                                       <td><?php echo $results->data[$i]['email']; ?></td>
+                                                     </tr>
+                                                   <?php }
                                                   ?>
                                               </tr>
                                           </tbody>
                                       </table>
+                                      <?php
+                                     echo $Paginator->createLinks( $links, 'pagination pagination-sm' );
+                                      ?>
                                   </div>
                             </div>
                         </div>

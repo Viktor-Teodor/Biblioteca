@@ -123,6 +123,19 @@
                     <input name="editura" class="form-control" placeholder="Editura">
                   </div>
                   <div class="form-group">
+                  <label for="categorie">Categorie</label>
+        						<select name="categorie">
+        						<option>Toate cartile</option>
+        						<option>Ideologie</option>
+        						<option>Stiinte naturale si matematica</option>
+        						<option>Tehnica</option>
+        						<option>Agricultura</option>
+        						<option>Literatura</option>
+        						<option>Literatura pentru copii</option>
+        						<option>Alte materii</option>
+        					</select>
+                </div>
+                  <div class="form-group">
                     <input type="submit" align="right" class="btn btn-default" name="cauta" value="Cauta">
                   </div>
                 </form>
@@ -137,72 +150,74 @@
                   <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Rezultate</h3>
               </div>
               <div class="panel-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Titlu</th>
-                                    <th>Autor</th>
-                                    <th>Pret</th>
-                                    <th>Editura</th>
-                                    <th>Categoria</th>
-                                    <th>Volum</th>
-                                    <th>Disponibilitate</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    <?php
-                                     require_once 'paginator.php';
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                          <tr>
+                              <th>Numar inventar</th>
+                              <th>Titlu</th>
+                              <th>Autor</th>
+                              <th>Pret</th>
+                              <th>Editura</th>
+                              <th>Categoria</th>
+                              <th>Volum</th>
+                              <th>Disponibilitate</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                                <?php
+                                $disp=array(1=>"Carte imprumutata", -1=>"Carte rezervata", 0=>"Carte disponibila");
+                                $titlu='%';
+                                $autor='%';
+                                $editura='%';
+                                $volum='%';
+                                $categorie="%";
+                                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                                $disp=array(1=>"Carte imprumutata", -1=>"Carte rezervata", 0=>"Carte disponibila");
+                                $titlu=htmlspecialchars($_REQUEST['titlu']); if($titlu==NULL) $titlu='%';
+                                $autor=htmlspecialchars($_REQUEST['autor']); if($autor==NULL) $autor='%';
+                                $editura=htmlspecialchars($_REQUEST['editura']); if($editura==NULL) $editura='%';
+                                $volum=htmlspecialchars($_REQUEST['volum']); if($volum==NULL) $volum='%';
+                                $categorie=htmlspecialchars($_REQUEST['categorie']); if($categorie=="Toate cartile") $categorie="%";
+}
+                                require_once 'admin/paginator.php';
 
-                                    $conn=new mysqli("localhost","root","","biblioteca");
+                                $conn=new mysqli("localhost","root","","biblioteca");
 
-                                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                                $result=array();
+                                $row=array();
 
-                                    $titlu=htmlspecialchars($_REQUEST['titlu']); if($titlu==NULL) $titlu='%';
-                                    $autor=htmlspecialchars($_REQUEST['autor']); if($autor==NULL) $autor='%';
-                                    $editura=htmlspecialchars($_REQUEST['editura']); if($editura==NULL) $editura='%';
-                                    $volum=htmlspecialchars($_REQUEST['volum']); if($volum==NULL) $volum='%';
-                                  //  $categorie=htmlspecialchars($_REQUEST['categorie']); if($categorie=="Toate cartile") $categorie="%";
-                                  $categorie='%';
-                                      if(isset($_POST['cauta'])){
-                                        $query="SELECT * FROM carte WHERE titlu LIKE '$titlu' AND autor LIKE '$autor' AND volum LIKE '$volum' AND editura LIKE '$editura' AND categorie LIKE '$categorie'";
+                                $query="SELECT * FROM carte WHERE titlu LIKE '$titlu' AND autor LIKE '$autor' AND volum LIKE '$volum' AND editura LIKE '$editura' AND categorie LIKE '$categorie'";
 
-                                    $limit=10;
-                                    $links=3;
-                                    $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
+                                $limit=10;
+                                $links=3;
+                                $page = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
+                                $Paginator  = new Paginator( $conn, $query );
+                                $results    = $Paginator->getData( $limit, $page );
 
-                                    $Paginator  = new Paginator( $conn, $query );
-
-                                    $results    = $Paginator->getData( $limit, $page );
-
-
-                                   for( $i = 0; $i < count( $results->data ); $i++ ){
-                                  
-                                      echo"<tr>";
-                                        echo"<td>".$results->data[$i]['titlu']."</td>
-                                        <td>".$results->data[$i]['autor']."</td>
-                                        <td>".$results->data[$i]['pret']."</td>
-                                        <td>".$results->data[$i]['editura']."</td>
-                                        <td>".$results->data[$i]['categorie']."</td>
-                                        <td>".$results->data[$i]['volum']."</td>
-                                        <td>".$results->data[$i]['disponibilitate']."</td>
-                                      </tr>";
-                                    }
-
-                            echo "</tbody>
-                        </table>
-                    </div>";
-
+                                for( $i = 0; $i < count( $results->data ); $i++ ){  ?>
+                                   <tr>
+                                     <td><?php echo $results->data[$i]['nr_inv']; ?></td>
+                                     <td><?php echo $results->data[$i]['titlu']; ?></td>
+                                     <td><?php echo $results->data[$i]['autor']; ?></td>
+                                     <td><?php echo $results->data[$i]['pret']; ?></td>
+                                     <td><?php echo $results->data[$i]['editura']; ?></td>
+                                     <td><?php echo $results->data[$i]['categorie']; ?></td>
+                                     <td><?php echo $results->data[$i]['volum']; ?></td>
+                                     <td><?php echo $disp[$results->data[$i]['disponibilitate']]; ?></td>
+                                   </tr>
+                                 <?php  } ?>
+                        </tbody>
+                    </table>
+                    <?php
                    echo $Paginator->createLinks( $links, 'pagination pagination-sm' );
-                 }}
+
                     ?>
-              </div>
-          </div>
+                </div>
       </div>
   </div>
-
-
-
+</div>
+</div>
 
 
     </div><!-- /.container -->

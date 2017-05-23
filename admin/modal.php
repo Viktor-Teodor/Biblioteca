@@ -31,7 +31,7 @@
 
 
 <?php
-
+$conn=new mysqli("localhost","root","","biblioteca");
 if(isset($_POST['type']) && $_POST["type"]=="adduser")
   {
     $sql = "INSERT INTO elev (nr_matricol, nume, prenume, clasa, telefon, email)
@@ -40,6 +40,10 @@ if(isset($_POST['type']) && $_POST["type"]=="adduser")
 if (!mysqli_query($conn, $sql)) {
     echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 }
+
+echo '<script type="text/javascript">
+window.location = "index.php"
+</script>';
   }
 
  ?>

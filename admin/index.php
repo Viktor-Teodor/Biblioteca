@@ -37,16 +37,17 @@ include_once 'function.php';
 
     <?php
     $conn=new mysqli("localhost","root","","biblioteca");
-
+    require_once "errors.php" ;
     global $add_rec, $res_rec;
     $add_rec=$res_rec=0;
-
+                  $errors=array();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // collect value of input field
         $nume = htmlspecialchars($_REQUEST['nume']);
         $prenume=htmlspecialchars($_REQUEST['prenume']);
         $nr_matricol=htmlspecialchars($_REQUEST['nr_mat']);
         $clasa=htmlspecialchars($_REQUEST['clasa']);
+        $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
 
         $limita_carti=3;
         $nr;
@@ -58,59 +59,51 @@ include_once 'function.php';
 
 
     if(isset($_POST['imprumut'])){
-      $rezervat=0;
-      $titlu=htmlspecialchars($_REQUEST['titlu']);
-      $volum=htmlspecialchars($_REQUEST['volum']);
 
-      $sql="SELECT * FROM carte WHERE titlu='$titlu'AND volum='$volum' AND disponibilitate='0'";
+      $rez=$conn->query("SELECT * FROM carte WHERE nr_inv='$nr_inv'");
+      $results=$rez->fetch_assoc();
 
-      $results=$conn->query($sql);
-      $aux=$results->fetch_assoc();
-      $nr_inv=$aux['nr_inv'];
-
-      if($results->num_rows==0)
-        echo "Nu mai exista carti disponibile";
-
-      else{
-
+      if($rez->num_rows==0)
+        $errors[]="Aceasta carte nu exista";
+      else
+        if($results['disponibilitate']!=0)
+            $errors[]="Aceasta carte nu este disponibila";
+        else
     if($nr_matricol){
 
-      $sql="SELECT * FROM imprumut WHERE nr_matr='$nr_matricol' AND data_restituire IS NULL";
+      $rezervat=0;
 
+      $sql="SELECT * FROM imprumut WHERE nr_matr='$nr_matricol' AND data_restituire IS NULL";
       $nr=$conn->query($sql);
 
-      $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1";
-        $rez=$conn->query($sql);
+      $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1 AND nr_inv='$nr_inv'";
+      $rez=$conn->query($sql);
+
 
         if($rez->num_rows==1)
           $rezervat=1;
 
       if($nr->num_rows<$limita_carti){
+
+        if ($conn->query("INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',CURDATE(),'$nr_inv')"))
+          $add_rec=1;
+
         if($rezervat==1){
-
-                $rez=$rez->fetch_assoc();
-
-          $sql="INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',GETDATE,'$rez[nr_inv]')";
+          $rez=$rez->fetch_assoc();
           $conn->query("DELETE FROM rezervari WHERE id='$rez[id]'");
-          $conn->query("UPDATE carte SET disponibilitate=-1 WHERE nr_inv='$nr_inv'");
         }
-        else
-        $sql = "INSERT INTO imprumut (nr_matr, data_imprumut, id_carte)
-              VALUES ('$nr_matricol', CURDATE(),'$nr_inv')";
 
-              if ($conn->query($sql)){
-                $add_rec=1;
-      }
       $sql="UPDATE carte SET disponibilitate='1' WHERE nr_inv='$nr_inv'";
       $conn->query($sql);
     }
+
     else {
-      echo "Acest elev are deja 3 carti imprumutate";
+      $errors[]="Acest elev are deja 3 carti imprumutate";
     }
-
 }
-    else {
 
+    else {
+      $rezervat=0;
     $sql="SELECT * FROM elev WHERE nume='$nume' AND prenume='$prenume' AND clasa='$clasa'";
 
     $results =$conn->query($sql);
@@ -127,36 +120,34 @@ include_once 'function.php';
 
     $nr=$conn->query($sql);
 
-          if($nr->num_rows<$limita_carti){
+    $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1 AND nr_inv='$nr_inv'";
 
-            $sql="SELECT * FROM rezervari WHERE nr_matr='$nr_matricol' AND DATEDIFF(CURDATE(),data_rezervare)<=1";
+    $rez=$conn->query($sql);
 
-              $rez=$conn->query($sql);
+      if($rez->num_rows==1)
+        $rezervat=1;
 
-              if($rez->num_rows==1){
+    if($nr->num_rows<$limita_carti){
 
-                $rez=$rez->fetch_assoc();
-                $sql="INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',CURDATE(),'$rez[nr_inv]')";
+        $sql="INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',GETDATE,'$nr_inv')";
 
-                $conn->query("DELETE FROM rezervari WHERE id='$rez[id]'");
-                $conn->query("UPDATE carte SET disponibilitate=-1 WHERE nr_inv='$nr_inv'");
-              }
-              else
-                $sql = "INSERT INTO imprumut (nr_matr, id_carte, data_imprumut)
-                  VALUES ('$user_imp[nr_matricol]', '$nr_inv', CURDATE())";
+      if($rezervat==1){
+        $rez=$rez->fetch_assoc();
+        $conn->query("DELETE FROM rezervari WHERE id='$rez[id]'");
+      }
 
-              if ($conn->query($sql)) {
-                        $add_rec=1;
-                      }
-                      //  $user_imp->free();
-                        $sql="UPDATE carte SET disponibilitate='1' WHERE nr_inv='$nr_inv'";
-                        $conn->query($sql);
+            if ($conn->query($sql)){
+              $add_rec=1;
+    }
+      $sql="UPDATE carte SET disponibilitate='1' WHERE nr_inv='$nr_inv'";
+      $conn->query($sql);
           }
           else
-            echo "Acest elev are deja 3 carti imprumutate";
+            $errors[]="Acest elev are deja 3 carti imprumutate";
     }
+
     else {
-      echo "Acest elev nu exista";
+      $errors[]="Acest elev nu exista";
     }
     }
     }
@@ -166,7 +157,7 @@ include_once 'function.php';
 
     //restituire carte
     if(isset($_POST['restituire'])){
-      $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
+
 
       if($nr_matricol){
 
@@ -215,8 +206,6 @@ include_once 'function.php';
     }
     }
     }
-    }
-
 
     ?>
 
@@ -241,7 +230,7 @@ include_once 'function.php';
                 <a class="navbar-brand" href="index.html">Administrare biblioteca</a>
             </div>
             <!-- Top Menu Items -->
-            <?phpinclude_once "menu_top.php" ?>
+            <?php include_once "menu_top.php" ?>
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
               <?php include_once 'menu.php'; ?>
             <!-- /.navbar-collapse -->
@@ -301,8 +290,13 @@ include_once 'function.php';
                         <?php } ?>
                     </div>
                 </div>
-
                 <?php } ?>
+
+                <?php
+                foreach ($errors as $index => $error) {
+                  errors($error);
+                }
+                ?>
                 <!-- /.row -->
 
                 <div class="row">
@@ -426,10 +420,7 @@ include_once 'function.php';
                             <div class="panel-body">
                                 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
                                   <div class="form-group">
-                                      <input name="titlu" class="form-control" placeholder="Titlul cartii" required>
-                                  </div>
-                                  <div class="form-group">
-                                      <input name="volum" class="form-control" placeholder="Volumul cartii" required>
+                                      <input name="nr_inv" class="form-control" placeholder="Numarul de inventar al cartii" required>
                                   </div>
                                   <div class="form-group">
                                     <input name="nr_mat" class="form-control" placeholder="Numar matricol elev">

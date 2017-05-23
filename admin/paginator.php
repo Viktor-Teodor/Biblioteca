@@ -38,6 +38,7 @@ class Paginator {
     $result->data   = $results;
 
     return $result;
+
 }
 
   public function createLinks( $links, $list_class ) {
