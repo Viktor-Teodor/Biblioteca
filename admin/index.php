@@ -48,7 +48,7 @@ include_once 'function.php';
         $nr_matricol=htmlspecialchars($_REQUEST['nr_mat']);
         $clasa=htmlspecialchars($_REQUEST['clasa']);
         $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
-
+        $rezervat;
         $limita_carti=3;
         $nr;
         $results=array();
@@ -83,6 +83,7 @@ include_once 'function.php';
         if($rez->num_rows==1)
           $rezervat=1;
 
+if(($results['disponibilitate']==-1 && $rezervat==1) || $results['disponibilitate']==0)
       if($nr->num_rows<$limita_carti){
 
         if ($conn->query("INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',CURDATE(),'$nr_inv')"))
@@ -103,6 +104,7 @@ include_once 'function.php';
 }
 
     else {
+
       $rezervat=0;
     $sql="SELECT * FROM elev WHERE nume='$nume' AND prenume='$prenume' AND clasa='$clasa'";
 
@@ -126,7 +128,7 @@ include_once 'function.php';
 
       if($rez->num_rows==1)
         $rezervat=1;
-
+if(($results['disponibilitate']==-1 && $rezervat==1) || $results['disponibilitate']==0)
     if($nr->num_rows<$limita_carti){
 
         $sql="INSERT INTO imprumut(nr_matr,data_imprumut,id_carte) VALUES ('$nr_matricol',GETDATE,'$nr_inv')";
@@ -150,9 +152,8 @@ include_once 'function.php';
       $errors[]="Acest elev nu exista";
     }
     }
-    }
   }
-
+}
 
 
     //restituire carte

@@ -145,7 +145,7 @@ $login=new user();
             <div class="panel-body">
                 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
                   <div class="form-group">
-                      <input name="nr_inv" class="form-control" placeholder="Numarul de inventar al cartii pe care doriti sa o rezervati pentru 24 de ore" required>
+                      <input name="nr_inv" class="form-control" placeholder="Numarul de inventar al cartii pe care doriti sa o rezervati pentru 24 de ore">
                   </div>
                   <div class="form-group">
                     <input type="submit" align="right" class="btn btn-default" name="rezerva" value="rezerva">
@@ -158,14 +158,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $conn=new mysqli("localhost","root","","biblioteca");
 
-  if(isset($_POST['rezerva'])){
+  if(isset($_POST['rezerva']) && $login->is_loggedin()){
 
 $nr_inv=htmlspecialchars($_REQUEST['nr_inv']);
+if($nr_inv!= NULL ){
 $rez=$conn->query("SELECT * FROM rezervari WHERE DATEDIFF(CURDATE(),data_rezervare)>1");
 while($rez->num_rows){
   $row=$rez->fetch_assoc();
   $conn->query("UPDATE carte SET disponibilitate=0 WHERE nr_inv='$row[nr_inv]'");
-  $conn0>query("DELETE FROM rezervari WHERE nr_inv='$row[nr_inv]'");
+  $conn->query("DELETE FROM rezervari WHERE nr_inv='$row[nr_inv]'");
 }
  $rez=$conn->query("SELECT * FROM carte WHERE nr_inv=$nr_inv");
 
@@ -190,6 +191,10 @@ while($rez->num_rows){
             $conn->query("UPDATE carte SET disponibilitate=-1 WHERE nr_inv='$nr_inv'");
           }
   }
+}
+}
+else {
+  $errors[]="Introduceti un numar de inventar";
 }
 }
 }

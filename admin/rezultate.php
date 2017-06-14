@@ -89,6 +89,7 @@ include_once 'modal_findbook.php';
                     <table class="table table-bordered table-hover table-striped">
                         <thead>
                           <tr>
+                            <th>Numar de inventar </th>
                               <th>Titlu</th>
                               <th>Autor</th>
                               <th>Pret</th>
